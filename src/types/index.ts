@@ -1,47 +1,85 @@
 // src/types/index.ts
 
-// Поставщик
-export interface Supplier {
+// ==================== БАЗОВЫЕ СПРАВОЧНИКИ ====================
+
+/** Регион (справочник) */
+export interface Region {
   id: string;
-  name: string;
-  logo?: string;
+  name: string;       // «Москва и МО», «СПб и ЛО», «Урал» и т.д.
+  timezone: string;   // «UTC+3»
 }
 
-// Категория товаров
+/** Категория верхнего уровня */
 export interface Category {
   id: string;
   name: string;
   slug: string;
-  icon?: string;
+  icon: string;
 }
 
-// Единица измерения
-export type UnitType = 'шт' | 'компл' | 'кан' | 'рул' | 'уп' | 'кг' | 'м';
+/** Подкатегория — дочерняя от категории */
+export interface Subcategory {
+  id: string;
+  name: string;
+  slug: string;
+  categoryId: string;   // FK → Category.id
+}
 
-// Товар
+/** Поставщик */
+export interface Supplier {
+  id: string;
+  name: string;
+  regionId: string;     // FK → Region.id
+  regionName: string;   // денормализация для удобства
+  rating: number;        // 1-5
+  verified: boolean;
+}
+
+// ==================== ТОВАР ====================
+
+/** Единицы измерения */
+export type UnitType = 'шт' | 'компл' | 'рул' | 'уп' | 'кг' | 'м' | 'паллет';
+
+/** Товар */
 export interface Product {
   id: string;
   name: string;
-  sku: string;
-  description?: string;
-  price: number;
+  sku: string;              // артикул
+  description: string;      // текстовое описание (пока заменяет характеристики)
+  price: number;            // цена за единицу, ₽
   unit: UnitType;
-  image?: string;
+  image: string | null;
+
+  // Наличие
   inStock: boolean;
-  
+  stockQuantity: number;    // остаток, если inStock = true
+
+  // MOQ — минимальный объём заказа
+  moq: number;              // минимальное количество для заказа
+  moqUnit: UnitType;        // единица измерения MOQ
+
   // Связи (внешние ключи в БД)
-  supplierId: string;
-  categoryId: string;
-  
-  // Денормализованные поля (для удобства отображения)
+  supplierId: string;       // FK → Supplier.id
+  categoryId: string;       // FK → Category.id
+  subcategoryId: string;    // FK → Subcategory.id
+
+  // Денормализованные поля для отображения без JOIN-ов
   supplierName: string;
   categoryName: string;
-  
-  // Характеристики (в БД это может быть JSONB или отдельная таблица)
+  subcategoryName: string;
+  regionId: string;         // FK → Region.id (через поставщика)
+  regionName: string;       // денормализация
+
+  // Место под будущие характеристики (JSONB или отдельная таблица)
+  // Пока пустой массив — потом заменишь на реальные поля
   specs: string[];
+
+  createdAt: string;        // ISO-дата
 }
 
-// Элемент заявки
+// ==================== ЗАЯВКА ====================
+
+/** Одна позиция в заявке */
 export interface RequestItem {
   id: string;
   productId: string;
@@ -49,33 +87,40 @@ export interface RequestItem {
   productSku: string;
   price: number;
   unit: UnitType;
-  quantity: number;
+  quantity: number;         // сколько штук заказали
   supplierId: string;
   supplierName: string;
 }
 
-// Заявка
+/** Заявка целиком */
 export interface PurchaseRequest {
   id: string;
   items: RequestItem[];
   createdAt: string;
-  status: 'draft' | 'sent';
+  updatedAt: string;
+  status: 'draft' | 'sent' | 'approved' | 'rejected';
 }
 
-// Фильтры (для UI состояния)
+// ==================== UI-СОСТОЯНИЯ ====================
+
+/** Фильтры каталога (состояние UI) */
 export interface CatalogFilters {
   search: string;
   categoryId: string | null;
+  subcategoryId: string | null;
   supplierIds: string[];
+  regionIds: string[];
   priceMin: number | null;
   priceMax: number | null;
+  moqMax: number | null;      // фильтр «MOQ не более»
   inStockOnly: boolean;
-  sortBy: 'relevance' | 'price_asc' | 'price_desc' | 'name_asc';
+  sortBy: 'relevance' | 'price_asc' | 'price_desc' | 'name_asc' | 'moq_asc';
 }
 
-// Пагинация
+/** Пагинация */
 export interface PaginationState {
   currentPage: number;
   totalPages: number;
   totalItems: number;
+  itemsPerPage: number;
 }

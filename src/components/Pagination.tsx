@@ -1,17 +1,29 @@
 // src/components/Pagination.tsx
 'use client';
 
-import { PaginationState } from '@/types';
-
 interface PaginationProps {
-  pagination: PaginationState;
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
   onPageChange: (page: number) => void;
 }
 
-export function Pagination({ pagination, onPageChange }: PaginationProps) {
-  const { currentPage, totalPages } = pagination;
-
+export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   if (totalPages <= 1) return null;
+
+  // Генерируем массив страниц для отображения
+  const pages: (number | 'ellipsis')[] = [];
+  if (totalPages <= 5) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    if (currentPage > 3) pages.push('ellipsis');
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+      pages.push(i);
+    }
+    if (currentPage < totalPages - 2) pages.push('ellipsis');
+    pages.push(totalPages);
+  }
 
   return (
     <div className="flex items-center justify-center gap-1.5 mt-9 pb-5">
@@ -22,9 +34,12 @@ export function Pagination({ pagination, onPageChange }: PaginationProps) {
       >
         ←
       </button>
-      {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-        const page = i + 1;
-        return (
+      {pages.map((page, i) =>
+        page === 'ellipsis' ? (
+          <span key={`ellipsis-${i}`} className="text-slate-400 px-1">
+            …
+          </span>
+        ) : (
           <button
             key={page}
             onClick={() => onPageChange(page)}
@@ -36,18 +51,7 @@ export function Pagination({ pagination, onPageChange }: PaginationProps) {
           >
             {page}
           </button>
-        );
-      })}
-      {totalPages > 5 && (
-        <>
-          <span className="text-slate-400">…</span>
-          <button
-            onClick={() => onPageChange(totalPages)}
-            className="w-9 h-9 rounded-lg border border-slate-200 bg-white cursor-pointer text-sm hover:bg-slate-50"
-          >
-            {totalPages}
-          </button>
-        </>
+        )
       )}
       <button
         onClick={() => onPageChange(currentPage + 1)}
