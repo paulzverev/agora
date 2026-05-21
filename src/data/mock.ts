@@ -493,6 +493,99 @@ export const products: Product[] = [
   },
 ];
 
+// src/data/mock.ts
+// ... весь существующий код остаётся, перед initialRequest добавляем:
+
+import { ProductDetail } from '@/types';
+
+/** Расширенные данные для карточек товаров */
+export const productDetails: Record<string, ProductDetail> = {
+  'prod1': {
+    ...products[0],
+    fullDescription: 'Стандартный европаллет из сосны. Термообработан по стандарту ISPM-15, сертифицирован для экспорта. Подходит для складского хранения и международных перевозок. Размеры строго соответствуют европейскому стандарту 1200×800 мм. Грузоподъёмность до 1000 кг при равномерной нагрузке. Влажность древесины не более 20%.',
+    priceHidden: false,
+    priceDiscount: 420,
+    images: ['📦', '📦', '📦'],
+    supplierInfo: {
+      id: 'sup1',
+      name: 'ТараТранс',
+      regionName: 'Москва и МО',
+      rating: 4.8,
+      verified: true,
+    },
+    characteristics: [
+      { id: 'ch1', name: 'Длина', value: '1200', unit: 'мм' },
+      { id: 'ch2', name: 'Ширина', value: '800', unit: 'мм' },
+      { id: 'ch3', name: 'Высота', value: '145', unit: 'мм' },
+      { id: 'ch4', name: 'Материал', value: 'Сосна', unit: undefined },
+      { id: 'ch5', name: 'Грузоподъёмность', value: '1000', unit: 'кг' },
+    ],
+    relatedProductIds: ['prod2', 'prod16', 'prod13'],
+  },
+  'prod2': {
+    ...products[1],
+    fullDescription: 'Химстойкий пластиковый поддон для пищевой и фармацевтической промышленности. Изготовлен из первичного полипропилена, устойчив к кислотам, щелочам и моющим средствам. Грузоподъёмность до 1500 кг. Не впитывает влагу, не гниёт, не требует термообработки. Срок службы — до 10 лет.',
+    priceHidden: false,
+    images: ['📦', '📦', '📦'],
+    supplierInfo: {
+      id: 'sup3',
+      name: 'ПромПакет',
+      regionName: 'Урал',
+      rating: 4.2,
+      verified: false,
+    },
+    characteristics: [
+      { id: 'ch6', name: 'Длина', value: '1200', unit: 'мм' },
+      { id: 'ch7', name: 'Ширина', value: '1000', unit: 'мм' },
+      { id: 'ch8', name: 'Материал', value: 'Полипропилен', unit: undefined },
+      { id: 'ch9', name: 'Грузоподъёмность', value: '1500', unit: 'кг' },
+    ],
+    relatedProductIds: ['prod1', 'prod3'],
+  },
+  'prod3': {
+    ...products[2],
+    fullDescription: 'Складной металлический поддон с оцинковкой. Для тяжёлых грузов до 2500 кг. Долговечный, устойчив к коррозии. Идеален для металлургической и машиностроительной отраслей. Складная конструкция экономит место при возврате.',
+    priceHidden: true,  // <-- СКРЫТАЯ ЦЕНА
+    images: ['📦', '📦', '📦'],
+    supplierInfo: {
+      id: 'sup4',
+      name: 'ГрузУпаковка',
+      regionName: 'Сибирь',
+      rating: 4.6,
+      verified: true,
+    },
+    characteristics: [
+      { id: 'ch10', name: 'Длина', value: '1000', unit: 'мм' },
+      { id: 'ch11', name: 'Ширина', value: '800', unit: 'мм' },
+      { id: 'ch12', name: 'Материал', value: 'Сталь оцинкованная', unit: undefined },
+      { id: 'ch13', name: 'Грузоподъёмность', value: '2500', unit: 'кг' },
+    ],
+    relatedProductIds: ['prod2', 'prod1'],
+  },
+  'prod4': {
+    ...products[3],
+    fullDescription: 'Высокорастяжимая стрейч-плёнка для ручной и машинной обмотки. Отличная адгезия слоёв, защита от пыли и влаги. Подходит для паллетирования грузов любого типа. Толщина 20 мкм, длина намотки 300 метров.',
+    priceHidden: false,
+    images: ['🎞️', '🎞️', '🎞️'],
+    supplierInfo: {
+      id: 'sup2',
+      name: 'УпакЛогистик',
+      regionName: 'СПб и ЛО',
+      rating: 4.5,
+      verified: true,
+    },
+    characteristics: [
+      { id: 'ch14', name: 'Ширина', value: '500', unit: 'мм' },
+      { id: 'ch15', name: 'Длина', value: '300', unit: 'м' },
+      { id: 'ch16', name: 'Толщина', value: '20', unit: 'мкм' },
+      { id: 'ch17', name: 'Цвет', value: 'Прозрачная', unit: undefined },
+    ],
+    relatedProductIds: ['prod8', 'prod5'],
+  },
+  // Для остальных товаров — можно добавить позже или использовать упрощённую версию.
+  // Пока сделаем fallback в page.tsx для товаров без детальной страницы.
+};
+
 // ==================== НАЧАЛЬНАЯ ЗАЯВКА ====================
 export const initialRequest: PurchaseRequest = {
   id: 'req1',

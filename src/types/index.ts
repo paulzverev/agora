@@ -124,3 +124,35 @@ export interface PaginationState {
   totalItems: number;
   itemsPerPage: number;
 }
+
+// src/types/index.ts
+// ... весь существующий код остаётся, в конец добавляем:
+
+/** Расширенная модель товара для страницы карточки */
+export interface ProductDetail extends Product {
+  // Дополнительные поля, которых нет в списке:
+  fullDescription: string;        // полное описание (может быть HTML/Markdown)
+  priceHidden: boolean;           // true → показываем «Цена скрыта»
+  priceDiscount?: number;         // цена со скидкой (если есть)
+  images: string[];               // массив URL картинок (пока заглушки)
+  supplierInfo: {
+    id: string;
+    name: string;
+    regionName: string;
+    rating: number;
+    verified: boolean;
+    // Контакты скрыты по условию задачи
+  };
+  // Будущие характеристики — пока пустой массив
+  characteristics: ProductCharacteristic[];
+  // Похожие товары (для блока «С этим также берут»)
+  relatedProductIds: string[];
+}
+
+/** Одна характеристика товара (заглушка для будущего) */
+export interface ProductCharacteristic {
+  id: string;
+  name: string;       // «Длина», «Ширина», «Материал» и т.д.
+  value: string;      // «1200 мм», «800 мм», «Сосна»
+  unit?: string;      // «мм», «кг», «мкм»
+}
