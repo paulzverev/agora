@@ -33,8 +33,8 @@ export default function LandingPage() {
           <span className="block text-slate-400">от проверенных поставщиков</span>
         </h1>
         <p className="text-lg text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Агора — B2B-платформа, где вы находите поставщиков паллет, плёнки, коробов, 
-          крепежа и другой упаковочной продукции. Сравнивайте цены, формируйте заявки 
+          Агора — B2B-платформа, где вы находите поставщиков паллет, плёнки, коробов,
+          крепежа и другой упаковочной продукции. Сравнивайте цены, формируйте заявки
           и получайте предложения напрямую.
         </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
@@ -43,6 +43,12 @@ export default function LandingPage() {
             className="bg-slate-900 text-white px-8 py-3.5 rounded-xl text-base font-semibold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 no-underline"
           >
             Смотреть каталог
+          </Link>
+          <Link
+            href="/find-supplier"
+            className="bg-emerald-600 text-white px-8 py-3.5 rounded-xl text-base font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/10 no-underline"
+          >
+            Подобрать поставщика
           </Link>
           <Link
             href="/catalog"
@@ -122,7 +128,7 @@ export default function LandingPage() {
             Найдите поставщика уже сегодня
           </h2>
           <p className="text-slate-300 mb-8 max-w-lg mx-auto">
-            Присоединяйтесь к платформе и получите доступ к проверенным поставщикам 
+            Присоединяйтесь к платформе и получите доступ к проверенным поставщикам
             транспортной упаковки со всей России.
           </p>
           <Link
