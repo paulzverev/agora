@@ -2,11 +2,11 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { Header } from '@/components/Header';
-import { Sidebar } from '@/components/Sidebar';
-import { SearchBar } from '@/components/SearchBar';
-import { ProductGrid } from '@/components/ProductGrid';
-import { Pagination } from '@/components/Pagination';
+import { Header } from './components/Header';
+import { Sidebar } from './components/Sidebar';
+import { SearchBar } from './components/SearchBar';
+import { ProductGrid } from './components/ProductGrid';
+import { Pagination } from './components/Pagination';
 import { products, initialRequest } from '@/data/mock';
 import { CatalogFilters, Product, RequestItem } from '@/types';
 
