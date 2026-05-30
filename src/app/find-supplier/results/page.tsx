@@ -3,7 +3,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { categories, products, regions, suppliers } from "@/data/mock";
 import type { Supplier } from "@/types";
 
@@ -85,9 +85,7 @@ function readSelectionFromStorage() {
   }
 
   try {
-    const raw = sessionStorage.getItem(
-      findSupplierSelectionKey,
-    );
+    const raw = sessionStorage.getItem(findSupplierSelectionKey);
 
     if (!raw) {
       return null;
@@ -95,19 +93,13 @@ function readSelectionFromStorage() {
 
     const parsed = JSON.parse(raw) as StoredSelection;
 
-    const selectedCategoryIds = Array.isArray(
-      parsed.selectedCategoryIds,
-    )
+    const selectedCategoryIds = Array.isArray(parsed.selectedCategoryIds)
       ? parsed.selectedCategoryIds.filter((value) =>
-          categories.some(
-            (category) => category.id === value,
-          ),
+          categories.some((category) => category.id === value),
         )
       : [];
 
-    const selectedRegionIds = Array.isArray(
-      parsed.selectedRegionIds,
-    )
+    const selectedRegionIds = Array.isArray(parsed.selectedRegionIds)
       ? parsed.selectedRegionIds.filter((value) =>
           regions.some((region) => region.id === value),
         )
@@ -128,30 +120,23 @@ function readSelectionFromStorage() {
 }
 
 export default function SupplierResultsPage() {
-  const [selection, setSelection] = useState(
-    () =>
-      readSelectionFromStorage() ??
-      defaultSelection,
-  );
+  const [selection, setSelection] = useState(defaultSelection);
 
-  const {
-    selectedCategoryIds,
-    selectedRegionIds,
-    minimumOrderFrom,
-  } = selection;
+  useEffect(() => {
+    const stored = readSelectionFromStorage();
+    if (stored) setSelection(stored);
+  }, []);
+
+  const { selectedCategoryIds, selectedRegionIds, minimumOrderFrom } = selection;
 
   const selectedCategories = useMemo(
     () =>
       selectedCategoryIds
         .map((categoryId) =>
-          categories.find(
-            (category) => category.id === categoryId,
-          ),
+          categories.find((category) => category.id === categoryId),
         )
         .filter(
-          (
-            category,
-          ): category is (typeof categories)[number] =>
+          (category): category is (typeof categories)[number] =>
             Boolean(category),
         ),
     [selectedCategoryIds],
@@ -162,117 +147,75 @@ export default function SupplierResultsPage() {
       .filter((item) => {
         if (
           selectedRegionIds.length > 0 &&
-          !selectedRegionIds.includes(
-            item.supplier.regionId,
-          )
+          !selectedRegionIds.includes(item.supplier.regionId)
         ) {
           return false;
         }
 
-        if (
-          item.minOrderValue < minimumOrderFrom
-        ) {
+        if (item.minOrderValue < minimumOrderFrom) {
           return false;
         }
 
-        if (
-          selectedCategoryIds.length === 0
-        ) {
+        if (selectedCategoryIds.length === 0) {
           return false;
         }
 
-        return selectedCategoryIds.some(
-          (categoryId) =>
-            item.categoryIds.includes(categoryId),
+        return selectedCategoryIds.some((categoryId) =>
+          item.categoryIds.includes(categoryId),
         );
       })
       .sort((a, b) => {
-        const aMatches =
-          selectedCategoryIds.filter((categoryId) =>
-            a.categoryIds.includes(categoryId),
-          ).length;
+        const aMatches = selectedCategoryIds.filter((categoryId) =>
+          a.categoryIds.includes(categoryId),
+        ).length;
 
-        const bMatches =
-          selectedCategoryIds.filter((categoryId) =>
-            b.categoryIds.includes(categoryId),
-          ).length;
+        const bMatches = selectedCategoryIds.filter((categoryId) =>
+          b.categoryIds.includes(categoryId),
+        ).length;
 
         if (aMatches !== bMatches) {
           return bMatches - aMatches;
         }
 
-        return (
-          b.supplier.rating -
-          a.supplier.rating
-        );
+        return b.supplier.rating - a.supplier.rating;
       });
-  }, [
-    minimumOrderFrom,
-    selectedCategoryIds,
-    selectedRegionIds,
-  ]);
+  }, [minimumOrderFrom, selectedCategoryIds, selectedRegionIds]);
 
-  const fullyMatchingSuppliers =
-    visibleSuppliers.filter((item) =>
-      selectedCategoryIds.every((categoryId) =>
-        item.categoryIds.includes(categoryId),
-      ),
+  const fullyMatchingSuppliers = visibleSuppliers.filter((item) =>
+    selectedCategoryIds.every((categoryId) =>
+      item.categoryIds.includes(categoryId),
+    ),
+  );
+
+  const partiallyMatchingSuppliers = visibleSuppliers.filter((item) => {
+    const matches = selectedCategoryIds.filter((categoryId) =>
+      item.categoryIds.includes(categoryId),
     );
 
-  const partiallyMatchingSuppliers =
-    visibleSuppliers.filter((item) => {
-      const matches =
-        selectedCategoryIds.filter((categoryId) =>
-          item.categoryIds.includes(categoryId),
-        );
-
-      return (
-        matches.length > 0 &&
-        matches.length <
-          selectedCategoryIds.length
-      );
-    });
+    return matches.length > 0 && matches.length < selectedCategoryIds.length;
+  });
 
   const toggleRegion = (regionId: string) => {
     setSelection((prev) => ({
       ...prev,
-      selectedRegionIds:
-        prev.selectedRegionIds.includes(
-          regionId,
-        )
-          ? prev.selectedRegionIds.filter(
-              (id) => id !== regionId,
-            )
-          : [
-              ...prev.selectedRegionIds,
-              regionId,
-            ],
+      selectedRegionIds: prev.selectedRegionIds.includes(regionId)
+        ? prev.selectedRegionIds.filter((id) => id !== regionId)
+        : [...prev.selectedRegionIds, regionId],
     }));
   };
 
-  const toggleCategory = (
-    categoryId: string,
-  ) => {
+  const toggleCategory = (categoryId: string) => {
     setSelection((prev) => ({
       ...prev,
-      selectedCategoryIds:
-        prev.selectedCategoryIds.includes(
-          categoryId,
-        )
-          ? prev.selectedCategoryIds.filter(
-              (id) => id !== categoryId,
-            )
-          : [
-              ...prev.selectedCategoryIds,
-              categoryId,
-            ],
+      selectedCategoryIds: prev.selectedCategoryIds.includes(categoryId)
+        ? prev.selectedCategoryIds.filter((id) => id !== categoryId)
+        : [...prev.selectedCategoryIds, categoryId],
     }));
   };
 
   const resetFilters = () => {
     setSelection({
-      selectedCategoryIds:
-        defaultCategoryIds,
+      selectedCategoryIds: defaultCategoryIds,
       selectedRegionIds: [],
       minimumOrderFrom: 0,
     });
@@ -281,10 +224,7 @@ export default function SupplierResultsPage() {
   const scrollToResults = () => {
     document
       .getElementById("supplier-results")
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -305,32 +245,19 @@ export default function SupplierResultsPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 font-bold">
               A
             </div>
-
             <span>Агора</span>
           </Link>
 
           <nav className="flex items-center gap-3 text-sm text-white/50">
-            <Link
-              href="/"
-              className="transition hover:text-white"
-            >
+            <Link href="/" className="transition hover:text-white">
               Главная
             </Link>
-
             <span>/</span>
-
-            <Link
-              href="/find-supplier"
-              className="transition hover:text-white"
-            >
+            <Link href="/find-supplier" className="transition hover:text-white">
               Подбор
             </Link>
-
             <span>/</span>
-
-            <span className="text-white">
-              Результаты
-            </span>
+            <span className="text-white">Результаты</span>
           </nav>
         </div>
       </header>
@@ -342,36 +269,22 @@ export default function SupplierResultsPage() {
 
           <div className="relative z-10 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
-              <div className="section-badge">
-                Результаты подбора
-              </div>
+              <div className="section-badge">Результаты подбора</div>
 
               <h1 className="mt-6 text-4xl font-black leading-[0.95] tracking-[-0.05em] sm:text-5xl lg:text-6xl">
                 Подходящие
-                <span className="gradient-text block">
-                  поставщики
-                </span>
+                <span className="gradient-text block">поставщики</span>
               </h1>
 
               <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/60">
-                Мы подобрали поставщиков,
-                которые соответствуют вашему
-                запросу по категориям,
-                региону и минимальному
-                заказу.
+                Мы подобрали поставщиков, которые соответствуют вашему запросу
+                по категориям, региону и минимальному заказу.
               </p>
             </div>
 
             <div className="glass rounded-3xl px-6 py-5">
-              <div className="text-sm text-white/50">
-                Найдено поставщиков
-              </div>
-
-              <div className="mt-2 text-4xl font-black">
-                {
-                  visibleSuppliers.length
-                }
-              </div>
+              <div className="text-sm text-white/50">Найдено поставщиков</div>
+              <div className="mt-2 text-4xl font-black">{visibleSuppliers.length}</div>
             </div>
           </div>
         </div>
@@ -384,10 +297,7 @@ export default function SupplierResultsPage() {
           <aside className="lg:sticky lg:top-24 lg:h-fit">
             <div className="glass rounded-[32px] p-6">
               <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-xl font-bold">
-                  Фильтры
-                </h2>
-
+                <h2 className="text-xl font-bold">Фильтры</h2>
                 <button
                   type="button"
                   onClick={resetFilters}
@@ -403,7 +313,6 @@ export default function SupplierResultsPage() {
                   <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-white/40">
                     Регион
                   </h3>
-
                   <div className="space-y-2">
                     {regions.map((region) => (
                       <label
@@ -412,20 +321,11 @@ export default function SupplierResultsPage() {
                       >
                         <input
                           type="checkbox"
-                          checked={selectedRegionIds.includes(
-                            region.id,
-                          )}
-                          onChange={() =>
-                            toggleRegion(
-                              region.id,
-                            )
-                          }
+                          checked={selectedRegionIds.includes(region.id)}
+                          onChange={() => toggleRegion(region.id)}
                           className="h-4 w-4 accent-cyan-400"
                         />
-
-                        <span className="text-sm text-white/70">
-                          {region.name}
-                        </span>
+                        <span className="text-sm text-white/70">{region.name}</span>
                       </label>
                     ))}
                   </div>
@@ -436,14 +336,10 @@ export default function SupplierResultsPage() {
                   <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-white/40">
                     Минимальный заказ
                   </h3>
-
                   <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                     <div className="text-3xl font-black">
-                      {formatMoney(
-                        minimumOrderFrom,
-                      )}
+                      {formatMoney(minimumOrderFrom)}
                     </div>
-
                     <input
                       type="range"
                       min="0"
@@ -451,20 +347,13 @@ export default function SupplierResultsPage() {
                       step="500"
                       value={minimumOrderFrom}
                       onChange={(event) =>
-                        setSelection(
-                          (prev) => ({
-                            ...prev,
-                            minimumOrderFrom:
-                              Number(
-                                event.target
-                                  .value,
-                              ),
-                          }),
-                        )
+                        setSelection((prev) => ({
+                          ...prev,
+                          minimumOrderFrom: Number(event.target.value),
+                        }))
                       }
                       className="mt-5 w-full accent-cyan-400"
                     />
-
                     <div className="mt-3 flex items-center justify-between text-xs text-white/30">
                       <span>0 ₽</span>
                       <span>50 000 ₽</span>
@@ -477,30 +366,21 @@ export default function SupplierResultsPage() {
                   <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-white/40">
                     Категории
                   </h3>
-
                   <div className="flex flex-wrap gap-2">
-                    {selectedCategories.map(
-                      (category) => (
-                        <button
-                          key={category.id}
-                          type="button"
-                          onClick={() =>
-                            toggleCategory(
-                              category.id,
-                            )
-                          }
-                          className={`rounded-full border px-4 py-2 text-sm transition ${
-                            selectedCategoryIds.includes(
-                              category.id,
-                            )
-                              ? "border-cyan-400/30 bg-cyan-400/10 text-cyan-200"
-                              : "border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06]"
-                          }`}
-                        >
-                          {category.name}
-                        </button>
-                      ),
-                    )}
+                    {selectedCategories.map((category) => (
+                      <button
+                        key={category.id}
+                        type="button"
+                        onClick={() => toggleCategory(category.id)}
+                        className={`rounded-full border px-4 py-2 text-sm transition ${
+                          selectedCategoryIds.includes(category.id)
+                            ? "border-cyan-400/30 bg-cyan-400/10 text-cyan-200"
+                            : "border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06]"
+                        }`}
+                      >
+                        {category.name}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -509,49 +389,28 @@ export default function SupplierResultsPage() {
                   onClick={scrollToResults}
                   className="w-full rounded-2xl bg-white px-5 py-4 text-sm font-semibold text-black transition hover:scale-[1.02]"
                 >
-                  Показать{" "}
-                  {
-                    visibleSuppliers.length
-                  }{" "}
-                  поставщиков
+                  Показать {visibleSuppliers.length} поставщиков
                 </button>
               </div>
             </div>
           </aside>
 
           {/* RESULTS */}
-          <div
-            id="supplier-results"
-            className="space-y-10"
-          >
+          <div id="supplier-results" className="space-y-10">
             {/* FULL */}
             <section>
               <div className="mb-6 flex items-center gap-3">
-                <h2 className="text-2xl font-bold">
-                  Полное совпадение
-                </h2>
-
+                <h2 className="text-2xl font-bold">Полное совпадение</h2>
                 <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-sm text-emerald-200">
-                  {
-                    fullyMatchingSuppliers.length
-                  }
+                  {fullyMatchingSuppliers.length}
                 </div>
               </div>
 
-              {fullyMatchingSuppliers.length >
-              0 ? (
+              {fullyMatchingSuppliers.length > 0 ? (
                 <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                  {fullyMatchingSuppliers.map(
-                    (item) => (
-                      <SupplierCard
-                        key={
-                          item.supplier.id
-                        }
-                        item={item}
-                        kind="full"
-                      />
-                    ),
-                  )}
+                  {fullyMatchingSuppliers.map((item) => (
+                    <SupplierCard key={item.supplier.id} item={item} kind="full" />
+                  ))}
                 </div>
               ) : (
                 <EmptySection title="Поставщиков пока не найдено" />
@@ -561,31 +420,17 @@ export default function SupplierResultsPage() {
             {/* PARTIAL */}
             <section>
               <div className="mb-6 flex items-center gap-3">
-                <h2 className="text-2xl font-bold">
-                  Частичное совпадение
-                </h2>
-
+                <h2 className="text-2xl font-bold">Частичное совпадение</h2>
                 <div className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-sm text-white/60">
-                  {
-                    partiallyMatchingSuppliers.length
-                  }
+                  {partiallyMatchingSuppliers.length}
                 </div>
               </div>
 
-              {partiallyMatchingSuppliers.length >
-              0 ? (
+              {partiallyMatchingSuppliers.length > 0 ? (
                 <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                  {partiallyMatchingSuppliers.map(
-                    (item) => (
-                      <SupplierCard
-                        key={
-                          item.supplier.id
-                        }
-                        item={item}
-                        kind="partial"
-                      />
-                    ),
-                  )}
+                  {partiallyMatchingSuppliers.map((item) => (
+                    <SupplierCard key={item.supplier.id} item={item} kind="partial" />
+                  ))}
                 </div>
               ) : (
                 <EmptySection title="Частичных совпадений нет" />
@@ -596,16 +441,11 @@ export default function SupplierResultsPage() {
             <section className="cta-card rounded-[36px] p-10 text-center">
               <div className="relative z-10 mx-auto max-w-2xl">
                 <h2 className="text-4xl font-black leading-tight">
-                  Не нашли нужного
-                  поставщика?
+                  Не нашли нужного поставщика?
                 </h2>
-
                 <p className="mt-5 text-lg leading-relaxed text-white/70">
-                  Оставьте заявку — и мы
-                  поможем подобрать варианты
-                  под ваш запрос.
+                  Оставьте заявку — и мы поможем подобрать варианты под ваш запрос.
                 </p>
-
                 <div className="mt-8 flex justify-center">
                   <Link
                     href="/catalog"
@@ -648,31 +488,19 @@ function SupplierCard({
                   : "bg-white/10 text-white/60"
               }`}
             >
-              {isFull
-                ? "Полное совпадение"
-                : "Частичное совпадение"}
+              {isFull ? "Полное совпадение" : "Частичное совпадение"}
             </div>
 
-            <h3 className="mt-3 text-xl font-bold">
-              {item.supplier.name}
-            </h3>
+            <h3 className="mt-3 text-xl font-bold">{item.supplier.name}</h3>
           </div>
         </div>
       </div>
 
       <div className="space-y-4 text-white/60">
-        <div>
-          📍 {item.supplier.regionName}
-        </div>
+        <div>📍 {item.supplier.regionName}</div>
 
         <div className="flex items-center gap-4">
-          <span>
-            ⭐{" "}
-            {item.supplier.rating.toFixed(
-              1,
-            )}
-          </span>
-
+          <span>⭐ {item.supplier.rating.toFixed(1)}</span>
           {item.supplier.verified && (
             <span className="rounded-full bg-cyan-400/10 px-2 py-1 text-xs text-cyan-200">
               Проверен
@@ -693,33 +521,21 @@ function SupplierCard({
 
         <div className="grid grid-cols-2 gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
           <div>
-            <div className="text-xs text-white/40">
-              MOQ
-            </div>
-
+            <div className="text-xs text-white/40">MOQ</div>
             <div className="mt-1 font-semibold text-white">
-              от{" "}
-              {formatMoney(
-                item.minOrderValue,
-              )}
+              от {formatMoney(item.minOrderValue)}
             </div>
           </div>
-
           <div>
-            <div className="text-xs text-white/40">
-              Товаров
-            </div>
-
-            <div className="mt-1 font-semibold text-white">
-              {item.productCount}
-            </div>
+            <div className="text-xs text-white/40">Товаров</div>
+            <div className="mt-1 font-semibold text-white">{item.productCount}</div>
           </div>
         </div>
       </div>
 
       <div className="mt-6">
         <Link
-          href="/catalog"
+          href={`/supplier/${item.supplier.id}`}
           className="block rounded-2xl bg-white px-5 py-3 text-center text-sm font-semibold text-black transition hover:scale-[1.02]"
         >
           Смотреть товары
@@ -729,11 +545,7 @@ function SupplierCard({
   );
 }
 
-function EmptySection({
-  title,
-}: {
-  title: string;
-}) {
+function EmptySection({ title }: { title: string }) {
   return (
     <div className="rounded-[28px] border border-dashed border-white/10 bg-white/[0.03] p-8 text-white/50">
       {title}
