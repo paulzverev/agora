@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { Search, Package, Zap } from 'lucide-react';
 
 export default function Page() {
   return (
@@ -46,14 +47,14 @@ export default function Page() {
       </header>
 
       {/* HERO */}
-      <section className="relative mx-auto flex min-h-[calc(100vh-64px)] max-w-7xl items-start px-6 pt-6 pb-0">
-        <div className="grid w-full items-start gap-6 lg:grid-cols-2 lg:gap-8">
+      <section className="relative mx-auto flex h-[calc(100vh-64px)] max-w-7xl items-center overflow-hidden px-6 py-6">
+        <div className="grid w-full h-full items-center gap-6 lg:grid-cols-2 lg:gap-8">
 
           {/* LEFT */}
-          <div className="relative z-10 pt-4">
+          <div className="relative z-10 flex flex-col justify-center">
 
             {/* BADGE */}
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-200">
+            <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-200">
               <div className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
               200+ проверенных поставщиков
             </div>
@@ -61,20 +62,20 @@ export default function Page() {
             {/* TITLE */}
             <h1 className="max-w-3xl text-5xl font-black leading-[0.8] tracking-[-0.065em] sm:text-6xl lg:text-7xl">
               Поиск поставщиков
-              <span className="gradient-text block">
+              <span className="gradient-text block pb-4">
                 транспортной упаковки
               </span>
             </h1>
 
             {/* DESCRIPTION */}
-            <p className="mt-12 max-w-xl text-lg leading-relaxed text-white/60 sm:text-xl">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/60 sm:text-xl">
               Современная B2B-платформа для закупки упаковки,
               паллет, плёнки и логистических материалов напрямую
               у производителей и дистрибьюторов.
             </p>
 
             {/* BUTTONS */}
-            <div className="mt-12 flex flex-wrap gap-4">
+            <div className="mt-6 flex flex-wrap gap-4">
               <Link
                 href="/catalog"
                 className="rounded-2xl bg-white px-8 py-4 text-base font-semibold text-black transition duration-300 hover:scale-[1.02]"
@@ -92,7 +93,7 @@ export default function Page() {
           </div>
 
           {/* RIGHT */}
-          <div className="relative flex items-start justify-center lg:justify-end">
+          <div className="relative hidden h-full items-center justify-end lg:flex">
 
             {/* MAIN GLOW */}
             <div className="absolute top-0 h-[520px] w-[520px] rounded-full bg-cyan-400/20 blur-[120px]" />
@@ -101,20 +102,14 @@ export default function Page() {
             <div className="absolute right-0 top-10 h-[260px] w-[260px] rounded-full bg-blue-500/20 blur-[100px]" />
 
             {/* IMAGE */}
-            <div className="relative z-10 animate-float-smooth">
+            <div className="relative z-10 h-full w-full max-w-[470px] animate-float-smooth overflow-hidden rounded-2xl">
               <Image
                 src="/images/packaging.jpg"
                 alt="Packaging"
                 width={900}
                 height={1200}
                 priority
-                className="
-                  h-auto
-                  w-full
-                  max-w-[470px]
-                  object-contain
-                  drop-shadow-[0_60px_120px_rgba(0,0,0,0.7)]
-                "
+                className="h-full w-full object-cover object-center drop-shadow-[0_60px_120px_rgba(0,0,0,0.7)]"
               />
             </div>
           </div>
@@ -123,8 +118,8 @@ export default function Page() {
 
       {/* FEATURES */}
       <section className="mx-auto max-w-7xl px-6 py-20">
-        <div className="mb-14 max-w-2xl">
-          <div className="section-badge">
+        <div className="mb-14 text-center">
+          <div className="section-badge inline-flex">
             Возможности платформы
           </div>
 
@@ -139,7 +134,7 @@ export default function Page() {
               key={feature.title}
               className="feature-card"
             >
-              <div className="mb-6 text-5xl">
+              <div className="mb-6 text-cyan-400">
                 {feature.icon}
               </div>
 
@@ -151,50 +146,6 @@ export default function Page() {
                 {feature.description}
               </p>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CATEGORIES */}
-      <section className="mx-auto max-w-7xl px-6 py-20">
-        <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <div className="section-badge">
-              Категории
-            </div>
-
-            <h2 className="mt-5 text-4xl font-bold">
-              Популярные направления
-            </h2>
-          </div>
-
-          <Link
-            href="/catalog"
-            className="text-sm text-cyan-300 transition hover:text-cyan-200"
-          >
-            Смотреть все →
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-6">
-          {categories.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/catalog?categoryId=${cat.id}`}
-              className="category-card no-underline"
-            >
-              <div className="text-5xl">
-                {cat.icon}
-              </div>
-
-              <div className="mt-5 font-medium text-white">
-                {cat.name}
-              </div>
-
-              <div className="mt-2 text-sm text-white/40">
-                {cat.count} товаров
-              </div>
-            </Link>
           ))}
         </div>
       </section>
@@ -250,30 +201,22 @@ export default function Page() {
 
 const features = [
   {
-    icon: '🔍',
+    icon: <Search size={36} strokeWidth={1.5} />,
     title: 'Умный поиск',
     description:
       'Быстро находите поставщиков по категориям, региону, MOQ и условиям поставки.',
   },
   {
-    icon: '📦',
+    icon: <Package size={36} strokeWidth={1.5} />,
     title: 'Единая заявка',
     description:
       'Собирайте товары от разных поставщиков и отправляйте запросы в пару кликов.',
   },
   {
-    icon: '⚡',
+    icon: <Zap size={36} strokeWidth={1.5} />,
     title: 'Быстрые ответы',
     description:
       'Получайте предложения напрямую от производителей и дистрибьюторов.',
   },
 ];
 
-const categories = [
-  { id: 'cat1', name: 'Паллеты', slug: 'pallets', icon: '📦', count: 48 },
-  { id: 'cat2', name: 'Плёнка', slug: 'films', icon: '🎞️', count: 36 },
-  { id: 'cat3', name: 'Короба', slug: 'boxes', icon: '📋', count: 72 },
-  { id: 'cat4', name: 'Мешки', slug: 'bags', icon: '🛍️', count: 24 },
-  { id: 'cat5', name: 'Защита', slug: 'protective', icon: '🛡️', count: 18 },
-  { id: 'cat6', name: 'Крепёж', slug: 'fasteners', icon: '🔗', count: 50 },
-];
