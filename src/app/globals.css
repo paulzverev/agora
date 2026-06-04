@@ -234,3 +234,12 @@ img {
   animation: floatSmooth 7s ease-in-out infinite;
   will-change: transform;
 }
+
+.scroll-snap-container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-snap-container::-webkit-scrollbar {
+  display: none;
+}
