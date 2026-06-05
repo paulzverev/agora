@@ -197,6 +197,31 @@ img {
       rgba(255, 255, 255, 0.05));
 }
 
+.category-card {
+  display: block;
+
+  border-radius: 28px;
+
+  padding: 1.5rem;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+
+  background: rgba(255, 255, 255, 0.07);
+
+  border-color: rgba(125, 211, 252, 0.25);
+}
+
 .cta-card {
   position: relative;
 

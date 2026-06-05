@@ -186,6 +186,48 @@ export default function Page() {
           </div>
         </section>
 
+        {/* CATEGORIES */}
+        <section
+          data-reveal-section
+          className='reveal-section snap-start flex min-h-screen items-center'>
+          <div className='mx-auto w-full max-w-7xl px-6 py-16'>
+            <div className='mb-14 flex flex-wrap items-end justify-between gap-6'>
+              <div>
+                <div className='section-badge'>Категории</div>
+
+                <h2 className='mt-5 text-4xl font-bold'>
+                  Популярные направления
+                </h2>
+              </div>
+
+              <Link
+                href='/catalog'
+                className='text-sm text-cyan-300 transition hover:text-cyan-200'>
+                Смотреть все →
+              </Link>
+            </div>
+
+            <div className='grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-6'>
+              {categories.map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`/catalog?categoryId=${category.id}`}
+                  className='category-card no-underline'>
+                  <div className='text-5xl'>{category.icon}</div>
+
+                  <div className='mt-5 font-medium text-white'>
+                    {category.name}
+                  </div>
+
+                  <div className='mt-2 text-sm text-white/40'>
+                    {category.count} товаров
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <section
           data-reveal-section
@@ -290,6 +332,15 @@ const features = [
     description:
       "Получайте предложения напрямую от производителей и дистрибьюторов.",
   },
+];
+
+const categories = [
+  { id: "cat1", name: "Паллеты", slug: "pallets", icon: "📦", count: 48 },
+  { id: "cat2", name: "Плёнка", slug: "films", icon: "🎞️", count: 36 },
+  { id: "cat3", name: "Короба", slug: "boxes", icon: "📋", count: 72 },
+  { id: "cat4", name: "Мешки", slug: "bags", icon: "🛍️", count: 24 },
+  { id: "cat5", name: "Защита", slug: "protective", icon: "🛡️", count: 18 },
+  { id: "cat6", name: "Крепёж", slug: "fasteners", icon: "🔗", count: 50 },
 ];
 
 type IconProps = {
