@@ -14,7 +14,7 @@ export default function Page() {
       initial: { opacity: 0, y: 30 },
       whileInView: { opacity: 1, y: 0 },
       viewport: { once: true, margin: '-60px' },
-      transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number], delay },
+      transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as [number, number, number, number], delay },
     };
   }
 
@@ -29,7 +29,7 @@ export default function Page() {
 
       {/* SCROLL CONTAINER */}
       <main
-        className="scroll-snap-container h-full overflow-y-scroll snap-y snap-mandatory"
+        className="scroll-snap-container h-full overflow-y-scroll snap-y snap-proximity"
         style={{ scrollPaddingTop: '64px' }}
       >
         {/* HEADER */}
@@ -63,7 +63,7 @@ export default function Page() {
         </header>
 
         {/* HERO */}
-        <section className="snap-start relative mx-auto flex h-[calc(100vh-64px)] max-w-7xl items-center overflow-hidden px-6 py-6">
+        <section className="snap-start relative mx-auto flex h-[calc(100vh-64px)] max-w-7xl items-center overflow-hidden px-4 py-6 sm:px-6 sm:py-8">
           <div className="grid w-full h-full items-center gap-6 lg:grid-cols-2 lg:gap-8">
 
             {/* LEFT */}
@@ -77,7 +77,7 @@ export default function Page() {
               </motion.div>
 
               <motion.h1
-                className="max-w-3xl text-5xl font-black leading-[0.8] tracking-[-0.065em] sm:text-6xl lg:text-7xl"
+                className="max-w-3xl text-4xl font-black leading-[0.95] tracking-[-0.045em] sm:text-5xl lg:text-6xl xl:text-7xl"
                 {...fadeUp(0.1)}
               >
                 Поиск поставщиков
@@ -87,7 +87,7 @@ export default function Page() {
               </motion.h1>
 
               <motion.p
-                className="mt-6 max-w-xl text-lg leading-relaxed text-white/60 sm:text-xl"
+                className="mt-6 max-w-xl text-base leading-relaxed text-white/60 sm:text-lg"
                 {...fadeUp(0.2)}
               >
                 Современная B2B-платформа для закупки упаковки,
@@ -96,18 +96,18 @@ export default function Page() {
               </motion.p>
 
               <motion.div
-                className="mt-6 flex flex-wrap gap-4"
+                className="mt-6 flex flex-col gap-4 sm:flex-row"
                 {...fadeUp(0.3)}
               >
                 <Link
                   href="/catalog"
-                  className="rounded-2xl bg-white px-8 py-4 text-base font-semibold text-black transition duration-300 hover:scale-[1.02]"
+                  className="rounded-2xl bg-white px-6 py-3 text-base font-semibold text-black transition duration-300 hover:scale-[1.02] sm:px-8 sm:py-4"
                 >
                   Открыть каталог
                 </Link>
                 <Link
                   href="/find-supplier"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-8 py-4 text-base font-semibold text-white transition duration-300 hover:bg-white/10"
+                  className="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-base font-semibold text-white transition duration-300 hover:bg-white/10 sm:px-8 sm:py-4"
                 >
                   Найти поставщика
                 </Link>
@@ -137,12 +137,12 @@ export default function Page() {
 
         {/* FEATURES */}
         <section className="snap-start flex min-h-screen items-center">
-          <div className="mx-auto w-full max-w-7xl px-6 py-16">
+          <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
             <motion.div className="mb-14 text-center" {...fadeUp(0)}>
               <div className="section-badge inline-flex">
                 Возможности платформы
               </div>
-              <h2 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl">
+              <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
                 Всё для современных B2B-закупок
               </h2>
             </motion.div>
@@ -171,14 +171,14 @@ export default function Page() {
 
         {/* CTA */}
         <section className="snap-start flex min-h-screen items-center">
-          <div className="mx-auto w-full max-w-5xl px-6 py-16">
+          <div className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
             <motion.div
               className="cta-card overflow-hidden rounded-[40px] p-10 sm:p-16"
               {...fadeUp(0)}
             >
               <div className="relative z-10 mx-auto max-w-2xl text-center">
                 <motion.h2
-                  className="text-4xl font-black leading-tight sm:text-5xl"
+                  className="text-3xl font-black leading-tight sm:text-4xl lg:text-5xl"
                   {...fadeUp(0.1)}
                 >
                   Найдите поставщика
@@ -186,7 +186,7 @@ export default function Page() {
                 </motion.h2>
 
                 <motion.p
-                  className="mt-6 text-lg leading-relaxed text-white/70"
+                  className="mt-6 text-base leading-relaxed text-white/70 sm:text-lg"
                   {...fadeUp(0.2)}
                 >
                   Сравнивайте предложения, отправляйте заявки и
@@ -194,18 +194,18 @@ export default function Page() {
                 </motion.p>
 
                 <motion.div
-                  className="mt-10 flex flex-wrap justify-center gap-4"
+                  className="mt-10 flex flex-col gap-4 justify-center sm:flex-row sm:gap-6"
                   {...fadeUp(0.3)}
                 >
                   <Link
                     href="/catalog"
-                    className="rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:scale-[1.02]"
+                    className="rounded-2xl bg-white px-6 py-3 font-semibold text-black transition hover:scale-[1.02] sm:px-8 sm:py-4"
                   >
                     Перейти в каталог
                   </Link>
                   <Link
                     href="/find-supplier"
-                    className="rounded-2xl border border-white/15 bg-white/10 px-8 py-4 font-semibold text-white transition hover:bg-white/15"
+                    className="rounded-2xl border border-white/15 bg-white/10 px-6 py-3 font-semibold text-white transition hover:bg-white/15 sm:px-8 sm:py-4"
                   >
                     Оставить заявку
                   </Link>
@@ -214,11 +214,10 @@ export default function Page() {
             </motion.div>
 
             <motion.div
-              className="mt-8 flex justify-center gap-6 text-sm text-white/30"
+              className="mt-8 flex justify-center text-sm text-white/30"
               {...fadeUp(0.4)}
             >
               <span>© 2026 Агора</span>
-              <span>B2B-платформа транспортной упаковки</span>
             </motion.div>
           </div>
         </section>

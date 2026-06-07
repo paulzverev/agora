@@ -214,7 +214,7 @@ export default function FindSupplierPage() {
         </div>
       </header>
 
-      <section className="relative mx-auto max-w-4xl px-6 pt-14 pb-24">
+      <section className="relative mx-auto max-w-4xl px-4 pt-12 pb-20 sm:px-6">
 
         {/* HERO */}
         <div className="mb-14 text-center">
@@ -222,7 +222,7 @@ export default function FindSupplierPage() {
             AI-подбор поставщиков
           </div>
 
-          <h1 className="mt-6 text-5xl font-black leading-none tracking-[-0.06em] sm:text-6xl">
+          <h1 className="mt-6 text-4xl font-black leading-tight tracking-[-0.06em] sm:text-5xl">
             Найдём поставщиков
             <span className="gradient-text block pb-2">
               под вашу задачу
@@ -287,7 +287,7 @@ export default function FindSupplierPage() {
               Выберите один или несколько вариантов
             </p>
 
-            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {packagingTypes.map((pt) => (
                 <button
                   key={pt.id}
@@ -314,7 +314,7 @@ export default function FindSupplierPage() {
               ))}
             </div>
 
-            <div className="mt-10 flex justify-end">
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-end">
               <button
                 onClick={nextStep}
                 disabled={
@@ -369,7 +369,7 @@ export default function FindSupplierPage() {
               ))}
             </div>
 
-            <div className="mt-10 flex justify-between">
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-between">
               <button
                 onClick={prevStep}
                 className="rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-sm text-white/70 transition hover:bg-white/10"
@@ -424,7 +424,7 @@ export default function FindSupplierPage() {
               </div>
             </div>
 
-            <div className="mt-12 flex justify-between">
+            <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:justify-between">
               <button
                 onClick={prevStep}
                 className="rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-sm text-white/70 transition hover:bg-white/10"
@@ -513,8 +513,7 @@ export default function FindSupplierPage() {
       {/* FOOTER */}
       <footer className="border-t border-white/10 py-8">
         <div className="mx-auto max-w-7xl px-6 text-center text-sm text-white/40">
-          © 2026 Агора — B2B-платформа
-          транспортной упаковки
+          © 2026 Агора
         </div>
       </footer>
     </main>
