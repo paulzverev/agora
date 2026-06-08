@@ -302,10 +302,12 @@ export default function Page() {
               </div>
             </div>
 
-            <div className='mt-3 flex justify-center gap-4 text-[11px] text-white/30 sm:mt-5 sm:gap-6 sm:text-sm'>
+            <motion.div
+              className="mt-8 flex justify-center text-sm text-white/30"
+              {...fadeUp(0.4)}
+            >
               <span>© 2026 Агора</span>
-              <span>B2B-платформа транспортной упаковки</span>
-            </div>
+            </motion.div>
           </div>
         </section>
       </main>
