@@ -37,6 +37,11 @@ export default function Page() {
     };
   }, []);
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Typewriter effect with proper cleanup
   useEffect(() => {
     const el = heroRef.current;
@@ -194,8 +199,7 @@ export default function Page() {
 
       {/* Hero секция */}
       <section
-        data-reveal-section
-        className="reveal-section relative overflow-hidden px-6 py-24 lg:py-32"
+        className="relative overflow-hidden px-6 py-24 lg:py-32"
         aria-label="Hero section"
       >
         <div className="relative mx-auto max-w-7xl">
