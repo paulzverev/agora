@@ -136,10 +136,14 @@ h1 {
   background: #9ca3af;
 }
 
-/* Selection color */
 ::selection {
-  background-color: rgba(37, 99, 235, 0.15);
-  color: #2563eb;
+  background: rgba(148, 163, 184, 0.18);
+  color: inherit;
+}
+
+::-moz-selection {
+  background: rgba(148, 163, 184, 0.18);
+  color: inherit;
 }
 
 /* Focus styles for accessibility */
