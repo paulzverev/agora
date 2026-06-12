@@ -1,6 +1,7 @@
+// page.tsx
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 
 const badgeMessages = [
@@ -20,65 +21,103 @@ const heroTitles = [
 
 export default function Page() {
   const heroRef = useRef<HTMLSpanElement | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const [badgeIndex, setBadgeIndex] = useState(0);
-  const [heroIndex, setHeroIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
 
-  const [heroText, setHeroText] = useState(heroTitles[0]);
-  const [heroTitleIndex, setHeroTitleIndex] = useState(0);
+  // Handle visibility change to pause/resume animations
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden);
+    };
 
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  // Typewriter effect with proper cleanup
   useEffect(() => {
     const el = heroRef.current;
-    if (!el) return;
+    if (!el || !isVisible) return;
+
+    // Create new AbortController for this effect
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
 
     let currentIndex = 0;
-    let currentText = heroTitles[0];
-
-    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const sleep = (ms: number) => new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(resolve, ms);
+      signal.addEventListener('abort', () => {
+        clearTimeout(timeout);
+        reject(new Error('Aborted'));
+      });
+    });
 
     const type = async (text: string) => {
+      if (signal.aborted) return;
       el.textContent = "";
 
       for (let i = 0; i <= text.length; i++) {
+        if (signal.aborted) break;
         el.textContent = text.slice(0, i);
-        await sleep(35);
+        await sleep(35).catch(() => { });
       }
     };
 
     const erase = async () => {
+      if (signal.aborted) return;
       const text = el.textContent || "";
 
       for (let i = text.length; i >= 0; i--) {
+        if (signal.aborted) break;
         el.textContent = text.slice(0, i);
-        await sleep(20);
+        await sleep(20).catch(() => { });
       }
     };
 
     const run = async () => {
-      while (true) {
-        const nextIndex = (currentIndex + 1) % heroTitles.length;
-        const nextText = heroTitles[nextIndex];
+      try {
+        while (!signal.aborted) {
+          const nextIndex = (currentIndex + 1) % heroTitles.length;
+          const nextText = heroTitles[nextIndex];
 
-        await erase();
-        await type(nextText);
+          await erase();
+          if (signal.aborted) break;
 
-        currentIndex = nextIndex;
-        currentText = nextText;
+          await type(nextText);
+          if (signal.aborted) break;
 
-        await sleep(2000);
+          currentIndex = nextIndex;
+          await sleep(2000);
+        }
+      } catch (error) {
+        // Effect was aborted, clean up silently
       }
     };
 
-    run();
-  }, []);
+    // Initial type
+    type(heroTitles[0]).then(() => run());
 
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, [isVisible]);
+
+  // Intersection Observer for reveal sections
   useEffect(() => {
     const sections = document.querySelectorAll<HTMLElement>("[data-reveal-section]");
+
+    if (sections.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
+            // Unobserve after revealing for performance
+            observer.unobserve(entry.target);
           }
         });
       },
@@ -93,44 +132,45 @@ export default function Page() {
     return () => observer.disconnect();
   }, []);
 
+  // Badge rotation with reduced motion support
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    let mounted = true;
 
-    if (prefersReducedMotion) return;
+    const checkReducedMotion = () => {
+      if (typeof window === 'undefined') return true;
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    };
+
+    if (checkReducedMotion()) return;
 
     const interval = window.setInterval(() => {
-      setBadgeIndex((current) => (current + 1) % badgeMessages.length);
+      if (mounted) {
+        setBadgeIndex((current) => (current + 1) % badgeMessages.length);
+      }
     }, 2600);
 
-    return () => window.clearInterval(interval);
+    return () => {
+      mounted = false;
+      window.clearInterval(interval);
+    };
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" role="main">
       {/* Navigation — чистая, минимальная */}
       <nav
-        className="
-    sticky
-    top-0
-    z-50
-    w-full
-    border-b
-    border-white/50
-    bg-white/65
-    backdrop-blur-2xl
-    supports-[backdrop-filter]:bg-white/60
-    shadow-[0_1px_0_rgba(255,255,255,0.6),0_8px_30px_rgba(0,0,0,0.04)]
-  "
+        className="sticky top-0 z-50 w-full border-b border-white/50 bg-white/65 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/60 shadow-[0_1px_0_rgba(255,255,255,0.6),0_8px_30px_rgba(0,0,0,0.04)]"
+        role="navigation"
+        aria-label="Main navigation"
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
           <Link
             href="/"
             className="group flex items-center gap-2 text-lg font-semibold tracking-tight text-gray-900 no-underline transition-opacity hover:opacity-80"
+            aria-label="Агора - главная страница"
           >
             <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gray-900">
-              <span className="text-sm font-bold text-white">А</span>
+              <span className="text-sm font-bold text-white" aria-hidden="true">А</span>
             </div>
             <span>Агора</span>
           </Link>
@@ -156,17 +196,18 @@ export default function Page() {
       <section
         data-reveal-section
         className="reveal-section relative overflow-hidden px-6 py-24 lg:py-32"
+        aria-label="Hero section"
       >
         <div className="relative mx-auto max-w-7xl">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1 text-sm text-gray-600">
-              <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500" aria-hidden="true" />
               Поиск на основе ИИ
             </div>
 
             <h1 className="mx-auto max-w-4xl min-h-[140px] text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-              <span ref={heroRef}></span>
-              <span className="typing-cursor" />
+              <span ref={heroRef} role="text" aria-live="polite"></span>
+              <span className="typing-cursor" aria-hidden="true" />
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-500">
@@ -181,25 +222,19 @@ export default function Page() {
               >
                 Начать поиск
               </Link>
-              <Link
-                href="/find-supplier"
-                className="rounded-md border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-              >
-                Смотреть демо
-              </Link>
             </div>
 
             <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
               <div className="flex items-center gap-2">
-                <div className="h-1 w-1 rounded-full bg-green-500" />
+                <div className="h-1 w-1 rounded-full bg-green-500" aria-hidden="true" />
                 <span>500+ поставщиков</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-1 w-1 rounded-full bg-blue-500" />
+                <div className="h-1 w-1 rounded-full bg-blue-500" aria-hidden="true" />
                 <span>10 000+ товаров</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-1 w-1 rounded-full bg-purple-500" />
+                <div className="h-1 w-1 rounded-full bg-purple-500" aria-hidden="true" />
                 <span>Бесплатно</span>
               </div>
             </div>
@@ -207,11 +242,11 @@ export default function Page() {
 
           {/* Dashboard mockup — продуктовый интерфейс */}
           <div className="mx-auto mt-20 max-w-5xl">
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg" role="img" aria-label="Пример интерфейса платформы">
               <div className="border-b border-gray-100 bg-gray-50/30 px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex gap-1.5">
+                    <div className="flex gap-1.5" aria-hidden="true">
                       <div className="h-3 w-3 rounded-full bg-red-400" />
                       <div className="h-3 w-3 rounded-full bg-yellow-400" />
                       <div className="h-3 w-3 rounded-full bg-green-400" />
@@ -220,7 +255,7 @@ export default function Page() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-400">AI Assistant</span>
-                    <div className="h-5 w-5 rounded-full bg-blue-100 text-center text-xs leading-5 text-blue-600">
+                    <div className="h-5 w-5 rounded-full bg-blue-100 text-center text-xs leading-5 text-blue-600" aria-label="AI активен">
                       ✓
                     </div>
                   </div>
@@ -233,7 +268,7 @@ export default function Page() {
                     <div className="rounded-lg border border-gray-200 bg-white p-4">
                       <div className="mb-3 flex items-center justify-between">
                         <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                          <span>🔍</span>
+                          <span aria-hidden="true">🔍</span>
                           <span>Поиск поставщиков</span>
                         </div>
                         <span className="text-xs text-gray-400">Advanced</span>
@@ -245,7 +280,7 @@ export default function Page() {
 
                     <div className="rounded-lg border border-gray-200 bg-white p-4">
                       <div className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
-                        <span>📍</span>
+                        <span aria-hidden="true">📍</span>
                         <span>Регион поставки</span>
                       </div>
                       <div className="flex gap-2">
@@ -261,7 +296,7 @@ export default function Page() {
                     <div className="rounded-lg border border-gray-200 bg-white p-4">
                       <div className="mb-3 flex items-center justify-between">
                         <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                          <span>🤖</span>
+                          <span aria-hidden="true">🤖</span>
                           <span>AI анализ</span>
                         </div>
                         <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
@@ -274,7 +309,7 @@ export default function Page() {
                             <span>Совместимость</span>
                             <span className="font-medium text-gray-900">92%</span>
                           </div>
-                          <div className="h-1.5 w-full rounded-full bg-gray-100">
+                          <div className="h-1.5 w-full rounded-full bg-gray-100" role="progressbar" aria-valuenow={92} aria-valuemin={0} aria-valuemax={100} aria-label="Совместимость 92%">
                             <div className="h-1.5 w-[92%] rounded-full bg-blue-500" />
                           </div>
                         </div>
@@ -283,7 +318,7 @@ export default function Page() {
                             <span>Качество сервиса</span>
                             <span className="font-medium text-gray-900">88%</span>
                           </div>
-                          <div className="h-1.5 w-full rounded-full bg-gray-100">
+                          <div className="h-1.5 w-full rounded-full bg-gray-100" role="progressbar" aria-valuenow={88} aria-valuemin={0} aria-valuemax={100} aria-label="Качество сервиса 88%">
                             <div className="h-1.5 w-[88%] rounded-full bg-blue-500" />
                           </div>
                         </div>
@@ -307,7 +342,7 @@ export default function Page() {
                       </div>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-3" role="list" aria-label="Список поставщиков">
                       {[
                         {
                           name: "ПаллетПром",
@@ -340,6 +375,7 @@ export default function Page() {
                         <div
                           key={idx}
                           className="rounded-lg border border-gray-100 bg-white p-3 transition-all hover:border-gray-200 hover:shadow-sm"
+                          role="listitem"
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
@@ -349,13 +385,13 @@ export default function Page() {
                                 </div>
                                 {supplier.verified && (
                                   <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-1.5 py-0.5 text-xs font-medium text-blue-700">
-                                    <span className="text-xs">✓</span>
+                                    <span aria-hidden="true">✓</span>
                                     <span>Verified</span>
                                   </span>
                                 )}
                                 {supplier.fastResponse && (
                                   <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700">
-                                    <span>⚡</span>
+                                    <span aria-hidden="true">⚡</span>
                                     <span>Fast Response</span>
                                   </span>
                                 )}
@@ -365,11 +401,11 @@ export default function Page() {
                                 <span>MOQ: {supplier.moq}</span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <div className="h-1 w-16 rounded-full bg-gray-100">
+                                <div className="h-1 w-16 rounded-full bg-gray-100" role="progressbar" aria-valuenow={parseInt(supplier.match)} aria-valuemin={0} aria-valuemax={100} aria-label={`AI совпадение ${supplier.match}`}>
                                   <div
                                     className={`h-1 rounded-full ${parseInt(supplier.match) >= 95
-                                      ? "bg-green-500"
-                                      : "bg-blue-500"
+                                        ? "bg-green-500"
+                                        : "bg-blue-500"
                                       }`}
                                     style={{ width: supplier.match }}
                                   />
@@ -401,9 +437,9 @@ export default function Page() {
                 {/* AI matching статус */}
                 <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
                   <div className="flex items-center gap-2 text-xs text-gray-400">
-                    <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-green-500" aria-hidden="true" />
                     <span>AI matching active</span>
-                    <span className="mx-1">•</span>
+                    <span className="mx-1" aria-hidden="true">•</span>
                     <span>Обновлён в реальном времени</span>
                   </div>
                   <div className="text-xs text-gray-400">
@@ -422,12 +458,13 @@ export default function Page() {
       </section>
 
       {/* Разделитель */}
-      <div className="border-t border-gray-100" />
+      <div className="border-t border-gray-100" aria-hidden="true" />
 
       {/* Features grid */}
       <section
         data-reveal-section
         className="reveal-section bg-gray-50/30 py-24"
+        aria-label="Преимущества платформы"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mb-16 text-center">
@@ -448,7 +485,7 @@ export default function Page() {
                 key={feature.title}
                 className="group relative rounded-2xl border border-gray-200 bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-md"
               >
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100" aria-hidden="true">
                   {feature.icon}
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">
@@ -464,12 +501,13 @@ export default function Page() {
       </section>
 
       {/* Разделитель */}
-      <div className="border-t border-gray-100" />
+      <div className="border-t border-gray-100" aria-hidden="true" />
 
       {/* Stats section */}
       <section
         data-reveal-section
         className="reveal-section py-24"
+        aria-label="Статистика платформы"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid gap-12 md:grid-cols-3">
@@ -489,12 +527,13 @@ export default function Page() {
       </section>
 
       {/* Разделитель */}
-      <div className="border-t border-gray-100" />
+      <div className="border-t border-gray-100" aria-hidden="true" />
 
       {/* CTA section */}
       <section
         data-reveal-section
         className="reveal-section py-24"
+        aria-label="Призыв к действию"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="rounded-2xl border border-gray-200 bg-gray-50/30 p-12 text-center sm:p-16">
@@ -528,7 +567,7 @@ export default function Page() {
               </div>
 
               <div className="mt-12 flex items-center justify-center gap-2 text-xs text-gray-400">
-                <div className="flex -space-x-1.5">
+                <div className="flex -space-x-1.5" aria-hidden="true">
                   {[1, 2, 3, 4].map((i) => (
                     <div
                       key={i}
@@ -542,9 +581,9 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="mt-16 text-center">
+        <footer className="mt-16 text-center">
           <span className="text-xs text-gray-400">© 2025 Агора. Все права защищены.</span>
-        </div>
+        </footer>
       </section>
     </div>
   );
@@ -553,7 +592,7 @@ export default function Page() {
 const features = [
   {
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <circle cx="11" cy="11" r="8" />
         <path d="m21 21-4.3-4.3" />
       </svg>
@@ -564,7 +603,7 @@ const features = [
   },
   {
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
         <polyline points="14 2 14 8 20 8" />
         <line x1="16" y1="13" x2="8" y2="13" />
@@ -578,7 +617,7 @@ const features = [
   },
   {
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
       </svg>
     ),
