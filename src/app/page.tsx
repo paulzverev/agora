@@ -163,7 +163,7 @@ export default function Page() {
 
             <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
               {heroText}
-              <span className="typing-cursor">|</span>
+              <span className="typing-cursor" />
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-500">

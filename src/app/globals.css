@@ -166,7 +166,11 @@ img {
 
 .typing-cursor {
   display: inline-block;
-  margin-left: 2px;
+  width: 3.5px;
+  height: 0.8em;
+  margin-left: 3px;
+  background: currentColor;
+  vertical-align: -0.1em;
   animation: blink 1s infinite;
 }
 
