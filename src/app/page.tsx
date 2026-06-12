@@ -116,19 +116,45 @@ export default function Page() {
 
     if (sections.length === 0) return;
 
+    // Immediately check which sections are visible
+    const checkInitialVisibility = () => {
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        
+        // If section is already in viewport, reveal it immediately without animation
+        if (rect.top < windowHeight && rect.bottom > 0) {
+          section.classList.add("is-visible-initial");
+        }
+      });
+    };
+
+    // Run immediately
+    checkInitialVisibility();
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
+            // Add a small delay for sections that weren't initially visible
+            if (!entry.target.classList.contains("is-visible-initial")) {
+              // Remove initial class if present and add animation class
+              entry.target.classList.remove("is-visible-initial");
+              
+              // Add animation class with requestAnimationFrame for smooth performance
+              requestAnimationFrame(() => {
+                entry.target.classList.add("is-visible");
+              });
+            }
+            
             // Unobserve after revealing for performance
             observer.unobserve(entry.target);
           }
         });
       },
       {
-        threshold: 0.15,
-        rootMargin: "0px 0px -80px 0px",
+        threshold: 0.1,
+        rootMargin: "0px 0px -100px 0px",
       },
     );
 
@@ -466,28 +492,29 @@ export default function Page() {
 
       {/* Features grid */}
       <section
-        data-reveal-section
+        data-reveal-section="features"
         className="reveal-section bg-gray-50/30 py-24"
         aria-label="Преимущества платформы"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mb-16 text-center">
-            <div className="mb-4 inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600">
+            <div className="mb-4 inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 reveal-child">
               Почему Агора
             </div>
-            <h2 className="mx-auto max-w-3xl text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="reveal-child mx-auto max-w-3xl text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
               Создано для современных команд закупок
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-gray-500">
+            <p className="reveal-child mx-auto mt-4 max-w-xl text-gray-500">
               Всё необходимое для быстрого поиска поставщиков упаковки
             </p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
+            {features.map((feature, index) => (
               <div
                 key={feature.title}
-                className="group relative rounded-2xl border border-gray-200 bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-md"
+                className="reveal-child group relative rounded-2xl border border-gray-200 bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-md"
+                style={{ transitionDelay: `${index * 100}ms` }}
               >
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100" aria-hidden="true">
                   {feature.icon}
@@ -509,7 +536,7 @@ export default function Page() {
 
       {/* Stats section */}
       <section
-        data-reveal-section
+        data-reveal-section="stats"
         className="reveal-section py-24"
         aria-label="Статистика платформы"
       >
@@ -519,8 +546,8 @@ export default function Page() {
               { value: "99.9%", label: "Время работы", desc: "Корпоративная надёжность" },
               { value: "< 2 ч", label: "Среднее время ответа", desc: "От поставщиков" },
               { value: "50 000+", label: "Обработанных заявок", desc: "И это только начало" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
+            ].map((stat, index) => (
+              <div key={stat.label} className="reveal-child text-center" style={{ transitionDelay: `${index * 150}ms` }}>
                 <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
                 <div className="mt-1 font-medium text-gray-700">{stat.label}</div>
                 <div className="mt-1 text-sm text-gray-400">{stat.desc}</div>
@@ -535,27 +562,27 @@ export default function Page() {
 
       {/* CTA section */}
       <section
-        data-reveal-section
+        data-reveal-section="cta"
         className="reveal-section py-24"
         aria-label="Призыв к действию"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="rounded-2xl border border-gray-200 bg-gray-50/30 p-12 text-center sm:p-16">
             <div className="mx-auto max-w-2xl">
-              <div className="mb-4 inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600">
+              <div className="mb-4 inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 reveal-child">
                 Готовы масштабировать закупки?
               </div>
 
-              <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              <h2 className="reveal-child mx-auto max-w-2xl text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                 Начните поиск поставщиков за 5 минут
               </h2>
 
-              <p className="mx-auto mt-4 max-w-md text-gray-500">
+              <p className="reveal-child mx-auto mt-4 max-w-md text-gray-500">
                 Присоединяйтесь к 500+ компаниям, которые уже находят надёжных
                 поставщиков упаковки через Агору.
               </p>
 
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <div className="reveal-child mt-8 flex flex-wrap justify-center gap-3">
                 <Link
                   href="/catalog"
                   className="rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
@@ -570,7 +597,7 @@ export default function Page() {
                 </Link>
               </div>
 
-              <div className="mt-12 flex items-center justify-center gap-2 text-xs text-gray-400">
+              <div className="reveal-child mt-12 flex items-center justify-center gap-2 text-xs text-gray-400">
                 <div className="flex -space-x-1.5" aria-hidden="true">
                   {[1, 2, 3, 4].map((i) => (
                     <div
