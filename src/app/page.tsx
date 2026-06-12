@@ -390,7 +390,6 @@ export default function Page() {
                 key={feature.title}
                 className="group relative rounded-2xl border border-gray-200 bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-md"
               >
-                <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl bg-transparent group-hover:bg-blue-500" />
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
                   {feature.icon}
                 </div>
