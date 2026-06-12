@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 
 const badgeMessages = [
@@ -19,6 +19,7 @@ const heroTitles = [
 ];
 
 export default function Page() {
+  const heroRef = useRef<HTMLSpanElement | null>(null);
   const [badgeIndex, setBadgeIndex] = useState(0);
   const [heroIndex, setHeroIndex] = useState(0);
 
@@ -26,46 +27,48 @@ export default function Page() {
   const [heroTitleIndex, setHeroTitleIndex] = useState(0);
 
   useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return;
+
     let currentIndex = 0;
     let currentText = heroTitles[0];
 
-    const runAnimation = () => {
-      const nextIndex = (currentIndex + 1) % heroTitles.length;
-      const nextText = heroTitles[nextIndex];
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-      let deletePos = currentText.length;
+    const type = async (text: string) => {
+      el.textContent = "";
 
-      const deleteInterval = setInterval(() => {
-        deletePos--;
-
-        setHeroText(currentText.slice(0, deletePos));
-
-        if (deletePos <= 0) {
-          clearInterval(deleteInterval);
-
-          let typePos = 0;
-
-          const typeInterval = setInterval(() => {
-            typePos++;
-
-            setHeroText(nextText.slice(0, typePos));
-
-            if (typePos >= nextText.length) {
-              clearInterval(typeInterval);
-
-              currentIndex = nextIndex;
-              currentText = nextText;
-
-              setTimeout(runAnimation, 2500);
-            }
-          }, 40);
-        }
-      }, 25);
+      for (let i = 0; i <= text.length; i++) {
+        el.textContent = text.slice(0, i);
+        await sleep(35);
+      }
     };
 
-    const startTimeout = setTimeout(runAnimation, 2500);
+    const erase = async () => {
+      const text = el.textContent || "";
 
-    return () => clearTimeout(startTimeout);
+      for (let i = text.length; i >= 0; i--) {
+        el.textContent = text.slice(0, i);
+        await sleep(20);
+      }
+    };
+
+    const run = async () => {
+      while (true) {
+        const nextIndex = (currentIndex + 1) % heroTitles.length;
+        const nextText = heroTitles[nextIndex];
+
+        await erase();
+        await type(nextText);
+
+        currentIndex = nextIndex;
+        currentText = nextText;
+
+        await sleep(2000);
+      }
+    };
+
+    run();
   }, []);
 
   useEffect(() => {
@@ -161,8 +164,8 @@ export default function Page() {
               Поиск на основе ИИ
             </div>
 
-            <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-              {heroText}
+            <h1 className="mx-auto max-w-4xl min-h-[140px] text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+              <span ref={heroRef}></span>
               <span className="typing-cursor" />
             </h1>
 
