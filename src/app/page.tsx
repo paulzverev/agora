@@ -5,23 +5,17 @@ import Link from "next/link";
 import Image from "next/image";
 
 const badgeMessages = [
-  "Сейчас найдем вам поставщика…",
-  "Может, коробочек?",
-  "Подберем упаковку быстрее",
-  "Запрос уже ищет отклик",
+  "Сканируем рынок...",
+  "Подбираем лучших поставщиков",
+  "Готовим персоналтные предложения",
+  "Почти нашли идеального партнера",
 ];
 
 export default function Page() {
-  const scrollContainerRef = useRef<HTMLElement | null>(null);
   const [badgeIndex, setBadgeIndex] = useState(0);
 
   useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const sections = Array.from(
-      container.querySelectorAll<HTMLElement>("[data-reveal-section]"),
-    );
+    const sections = document.querySelectorAll<HTMLElement>("[data-reveal-section]");
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -32,8 +26,8 @@ export default function Page() {
         });
       },
       {
-        root: container,
-        threshold: 0.35,
+        threshold: 0.2,
+        rootMargin: "0px 0px -100px 0px",
       },
     );
 
@@ -57,347 +51,325 @@ export default function Page() {
   }, []);
 
   return (
-    <div className='h-screen overflow-hidden bg-[#060816] text-white'>
-      {/* FIXED BACKGROUND */}
-      <div className='fixed inset-0 -z-10'>
-        <div className='hero-glow hero-glow-1' />
-        <div className='hero-glow hero-glow-2' />
-        <div className='hero-grid' />
-      </div>
+    <div className="relative min-h-screen bg-transparent text-white overflow-x-hidden">
+      {/* Enhanced glass navigation */}
+      <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-black/30 backdrop-blur-2xl supports-[backdrop-filter]:bg-black/20">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+          <Link
+            href="/"
+            className="group flex items-center gap-2.5 text-lg font-semibold tracking-tight no-underline text-white transition-all hover:opacity-80"
+          >
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400 to-cyan-400 shadow-lg shadow-blue-500/30 transition-all group-hover:scale-105 group-hover:shadow-blue-500/50">
+              <span className="font-bold text-white">A</span>
+            </div>
+            <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text font-medium tracking-tight text-transparent">
+              Agora
+            </span>
+          </Link>
 
-      {/* SCROLL CONTAINER */}
-      <main
-        ref={scrollContainerRef}
-        className='scroll-snap-container h-full overflow-y-scroll snap-y snap-mandatory'
-        style={{ scrollPaddingTop: "64px" }}>
-        {/* HEADER */}
-        <header className='sticky top-0 z-50 border-b border-white/10 bg-[#060816]/70 backdrop-blur-xl'>
-          <div className='mx-auto flex h-16 max-w-7xl items-center justify-between px-6'>
+          <div className="flex items-center gap-4">
             <Link
-              href='/'
-              className='flex items-center gap-3 text-lg font-semibold tracking-tight no-underline'>
-              <div className='flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 font-bold shadow-lg shadow-cyan-500/20'>
-                A
-              </div>
-              <span>Агора</span>
+              href="/catalog"
+              className="hidden rounded-full px-5 py-2 text-sm font-medium text-gray-300 transition-all duration-300 hover:text-white md:block"
+            >
+              Catalog
             </Link>
+            <Link
+              href="/find-supplier"
+              className="group relative overflow-hidden rounded-full bg-white/10 backdrop-blur-md px-5 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-white/20 border border-white/20"
+            >
+              <span className="relative z-10">Find supplier →</span>
+            </Link>
+          </div>
+        </div>
+      </nav>
 
-            <div className='flex items-center gap-3'>
+      {/* Hero section - no snap */}
+      <section
+        data-reveal-section
+        className="reveal-section relative mx-auto flex min-h-screen max-w-7xl items-center px-6 pt-32 pb-20 lg:px-8"
+      >
+        {/* Enhanced floating orbs with more blur */}
+        <div className="hero-glow hero-glow-1 animate-float-smooth opacity-70" />
+        <div className="hero-glow hero-glow-2 animate-float-smooth opacity-70" style={{ animationDelay: "2s" }} />
+        <div className="hero-glow absolute bottom-0 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-purple-500/10 blur-[100px]" />
+
+        <div className="relative z-10 grid w-full gap-16 lg:grid-cols-2 lg:gap-12">
+          {/* Left content */}
+          <div className="flex flex-col justify-center">
+            <div className="glass-card-enhanced mb-6 w-fit animate-pulse">
+              <div className="mr-2 h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+              AI-powered matching
+            </div>
+
+            <h1 className="text-5xl font-bold leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl">
+              Find packaging
+              <span className="gradient-text-enhanced mt-2 block">
+                suppliers instantly
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-gray-300 sm:text-lg">
+              B2B platform connecting you with verified manufacturers of
+              pallets, stretch film, boxes, and logistics materials.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-4">
               <Link
-                href='/catalog'
-                className='hidden rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm text-white/80 transition duration-300 hover:bg-white/10 md:block'>
-                Каталог
+                href="/catalog"
+                className="btn-primary-enhanced rounded-full px-6 py-3 text-sm font-semibold"
+              >
+                Start exploring →
               </Link>
               <Link
-                href='/find-supplier'
-                className='rounded-full bg-white px-5 py-2 text-sm font-medium text-black transition duration-300 hover:scale-[1.03]'>
-                Подобрать поставщика
+                href="/find-supplier"
+                className="btn-ghost-enhanced rounded-full px-6 py-3 text-sm font-semibold transition-all"
+              >
+                Watch demo
               </Link>
+            </div>
+
+            <div className="mt-12 flex items-center gap-8 text-sm text-gray-400">
+              <div className="flex items-center gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+                <span>500+ suppliers</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
+                <span>10k+ products</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse" />
+                <span>Free to use</span>
+              </div>
             </div>
           </div>
-        </header>
 
-        {/* HERO */}
-        <section
-          data-reveal-section
-          className='reveal-section snap-start relative mx-auto flex h-[calc(100vh-64px)] max-w-7xl items-center overflow-hidden px-6 py-6'>
-          <div className='grid w-full h-full items-center gap-6 lg:grid-cols-2 lg:gap-8'>
-            {/* LEFT */}
-            <div className='relative z-10 flex flex-col justify-center'>
-              <div className='mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-200'>
-                <div className='h-2 w-2 rounded-full bg-cyan-400 animate-pulse' />
-                <span
-                  key={badgeIndex}
-                  className='badge-rotator inline-block leading-none'>
-                  {badgeMessages[badgeIndex]}
-                </span>
-              </div>
-
-              <h1 className='max-w-3xl text-5xl font-black leading-[0.8] tracking-[-0.065em] sm:text-6xl lg:text-7xl'>
-                Поиск поставщиков
-                <span className='gradient-text block pb-4'>
-                  транспортной упаковки
-                </span>
-              </h1>
-
-              <p className='mt-6 max-w-xl text-lg leading-relaxed text-white/60 sm:text-xl'>
-                Современная B2B-платформа для закупки упаковки, паллет, плёнки и
-                логистических материалов напрямую у производителей и
-                дистрибьюторов.
-              </p>
-
-              <div className='mt-6 flex flex-wrap gap-4'>
-                <Link
-                  href='/catalog'
-                  className='rounded-2xl bg-white px-8 py-4 text-base font-semibold text-black transition duration-300 hover:scale-[1.02]'>
-                  Открыть каталог
-                </Link>
-                <Link
-                  href='/find-supplier'
-                  className='rounded-2xl border border-white/10 bg-white/5 px-8 py-4 text-base font-semibold text-white transition duration-300 hover:bg-white/10'>
-                  Найти поставщика
-                </Link>
-              </div>
-            </div>
-
-            {/* RIGHT */}
-            <div className='relative hidden h-full items-center justify-end lg:flex'>
-              <div className='absolute top-0 h-[520px] w-[520px] rounded-full bg-cyan-400/20 blur-[120px]' />
-              <div className='absolute right-0 top-10 h-[260px] w-[260px] rounded-full bg-blue-500/20 blur-[100px]' />
-              <div className='relative z-10 h-full w-full max-w-[470px] animate-float-smooth overflow-hidden rounded-2xl'>
+          {/* Right - Enhanced glass image card */}
+          <div className="relative hidden h-full items-center justify-end lg:flex">
+            <div className="glass-card-premium relative w-full max-w-md overflow-hidden rounded-3xl p-1.5 shadow-2xl">
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl">
                 <Image
-                  src='/images/packaging.jpg'
-                  alt='Packaging'
-                  width={900}
-                  height={1200}
+                  src="/images/packaging.jpg"
+                  alt="Warehouse packaging"
+                  width={800}
+                  height={1067}
                   priority
-                  className='h-full w-full object-cover object-center drop-shadow-[0_60px_120px_rgba(0,0,0,0.7)]'
+                  className="h-full w-full object-cover object-center"
                 />
               </div>
+              <div className="absolute bottom-4 left-4 glass-card-dark rounded-xl px-4 py-2 text-xs font-mono text-cyan-300 backdrop-blur-xl">
+                🏭 500+ verified partners
+              </div>
+              <div className="absolute top-4 right-4 glass-card-dark rounded-xl px-3 py-1.5 text-xs font-mono">
+                ⚡ Live
+              </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* FEATURES */}
-        <section
-          data-reveal-section
-          className='reveal-section snap-start flex min-h-screen items-center'>
-          <div className='mx-auto w-full max-w-7xl px-6 py-16'>
-            <div className='mb-14 text-center'>
-              <div className='section-badge inline-flex'>
-                Возможности платформы
+      {/* Features grid */}
+      <section
+        data-reveal-section
+        className="reveal-section relative mx-auto max-w-7xl px-6 py-24 lg:px-8"
+      >
+        <div className="hero-grid opacity-30" />
+
+        <div className="mb-16 text-center">
+          <div className="glass-card-dark mx-auto w-fit px-5 py-2">Why choose Agora</div>
+          <h2 className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl">
+            Built for modern
+            <span className="gradient-text-enhanced ml-2">procurement teams</span>
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-gray-300">
+            Everything you need to source packaging materials faster
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {features.map((feature, idx) => (
+            <div
+              key={feature.title}
+              className="glass-card-premium group cursor-pointer"
+              style={{ animationDelay: `${idx * 0.1}s` }}
+            >
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-2xl backdrop-blur-sm transition-all group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-blue-500/20 group-hover:to-cyan-500/20">
+                {feature.icon}
               </div>
-              <h2 className='mt-5 text-4xl font-bold tracking-tight sm:text-5xl'>
-                Всё для современных B2B-закупок
-              </h2>
+              <h3 className="text-xl font-semibold tracking-tight">
+                {feature.title}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-gray-300">
+                {feature.description}
+              </p>
+              <div className="mt-4 flex items-center gap-1 text-xs font-mono text-cyan-400 opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-1">
+                <span>Learn more</span>
+                <span>→</span>
+              </div>
             </div>
+          ))}
+        </div>
+      </section>
 
-            <div className='grid gap-6 md:grid-cols-3'>
-              {features.map((feature) => (
-                <div key={feature.title} className='feature-card'>
-                  <div className='mb-6 text-cyan-400'>{feature.icon}</div>
-                  <h3 className='text-xl font-semibold'>{feature.title}</h3>
-                  <p className='mt-4 leading-relaxed text-white/60'>
-                    {feature.description}
-                  </p>
-                </div>
-              ))}
+      {/* Stats section */}
+      <section
+        data-reveal-section
+        className="reveal-section relative mx-auto max-w-7xl px-6 py-20 lg:px-8"
+      >
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            { value: "99.9%", label: "Uptime SLA", icon: "⚡", desc: "Enterprise-grade reliability" },
+            { value: "< 2h", label: "Avg. response time", icon: "🚀", desc: "From suppliers" },
+            { value: "50k+", label: "RFQs processed", icon: "📦", desc: "And counting" },
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="glass-card-premium text-center transition-all duration-500 hover:scale-105 hover:shadow-2xl"
+            >
+              <div className="mb-3 text-4xl">{stat.icon}</div>
+              <div className="text-4xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                {stat.value}
+              </div>
+              <div className="mt-2 text-sm font-semibold text-white/90">{stat.label}</div>
+              <div className="mt-1 text-xs text-gray-400">{stat.desc}</div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section
+        data-reveal-section
+        className="reveal-section relative mx-auto max-w-7xl px-6 py-20 lg:px-8"
+      >
+        <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <div className="glass-card-dark w-fit px-5 py-2">Categories</div>
+            <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
+              Browse by product
+            </h2>
           </div>
-        </section>
+          <Link
+            href="/catalog"
+            className="group flex items-center gap-2 text-sm font-medium text-gray-300 transition-all hover:text-white"
+          >
+            <span>View all</span>
+            <span className="transition-transform group-hover:translate-x-1">
+              →
+            </span>
+          </Link>
+        </div>
 
-        {/* CATEGORIES */}
-        <section
-          data-reveal-section
-          className='reveal-section snap-start flex min-h-screen items-center'>
-          <div className='mx-auto w-full max-w-7xl px-6 py-16'>
-            <div className='mb-14 flex flex-wrap items-end justify-between gap-6'>
-              <div>
-                <div className='section-badge'>Категории</div>
-
-                <h2 className='mt-5 text-4xl font-bold'>
-                  Популярные направления
-                </h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+          {categories.map((category) => (
+            <Link
+              key={category.slug}
+              href={`/catalog?categoryId=${category.id}`}
+              className="glass-card group text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+            >
+              <div className="mb-3 text-4xl transition-all duration-300 group-hover:scale-110 group-hover:text-cyan-400">
+                {category.icon}
               </div>
+              <div className="text-sm font-medium text-white/90">
+                {category.name}
+              </div>
+              <div className="mt-1 text-xs text-gray-400">
+                {category.count} items
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
+      {/* CTA */}
+      <section
+        data-reveal-section
+        className="reveal-section relative mx-auto max-w-7xl px-6 py-20 lg:px-8"
+      >
+        <div className="cta-card-enhanced relative overflow-hidden rounded-3xl p-10 shadow-2xl sm:p-14">
+          <div className="cta-orb-enhanced cta-orb-1-enhanced" />
+          <div className="cta-orb-enhanced cta-orb-2-enhanced" />
+          <div className="cta-gridline-enhanced" />
+
+          <div className="relative z-10 mx-auto max-w-3xl text-center">
+            <div className="glass-card-dark mx-auto w-fit border border-cyan-500/30 text-cyan-300">
+              🎯 Ready to scale your procurement?
+            </div>
+
+            <h2 className="mt-6 text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+              Start sourcing in
+              <span className="gradient-text-enhanced block">under 5 minutes</span>
+            </h2>
+
+            <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-gray-300">
+              Join 500+ companies already finding reliable packaging suppliers
+              through Agora.
+            </p>
+
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link
-                href='/catalog'
-                className='text-sm text-cyan-300 transition hover:text-cyan-200'>
-                Смотреть все →
+                href="/catalog"
+                className="btn-primary-enhanced rounded-full px-8 py-3.5 text-sm font-semibold"
+              >
+                Get started free →
+              </Link>
+              <Link
+                href="/find-supplier"
+                className="btn-ghost-enhanced rounded-full px-8 py-3.5 text-sm font-semibold"
+              >
+                Contact sales
               </Link>
             </div>
 
-            <div className='grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-6'>
-              {categories.map((category) => (
-                <Link
-                  key={category.slug}
-                  href={`/catalog?categoryId=${category.id}`}
-                  className='category-card no-underline'>
-                  <div className='text-5xl'>{category.icon}</div>
-
-                  <div className='mt-5 font-medium text-white'>
-                    {category.name}
-                  </div>
-
-                  <div className='mt-2 text-sm text-white/40'>
-                    {category.count} товаров
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section
-          data-reveal-section
-          className='reveal-section snap-start flex h-[calc(100vh-64px)] items-center'>
-          <div className='relative mx-auto flex h-full w-full max-w-5xl flex-col justify-center px-6 py-4 sm:py-6'>
-            <div className='cta-card relative isolate overflow-hidden rounded-[36px] p-4 sm:p-6 lg:p-8'>
-              <div className='cta-orb cta-orb-1' />
-              <div className='cta-orb cta-orb-2' />
-              <div className='cta-gridline' />
-
-              <div className='relative z-10 mx-auto max-w-3xl text-center'>
-                <div className='inline-flex items-center gap-2 rounded-full border border-cyan-300/15 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100/90 sm:text-sm'>
-                  <div className='h-2 w-2 rounded-full bg-cyan-300 animate-pulse' />
-                  Каталог, заявки и отклики в одной B2B-среде
-                </div>
-
-                <h2 className='mt-4 text-2xl font-extrabold leading-[1.02] tracking-[-0.04em] sm:text-3xl lg:text-4xl'>
-                  <span className='block text-white/92'>
-                    Найдите поставщика
-                  </span>
-                  <span className='gradient-text block pb-2 leading-[1.0] sm:text-5xl lg:text-6xl'>
-                    быстрее конкурентов
-                  </span>
-                </h2>
-
-                <p className='mt-3 mx-auto max-w-lg text-sm leading-6 text-white/68 sm:text-base'>
-                  Здесь нет фейковых метрик и псевдо-дашбордов. Только понятный
-                  блок с входом в каталог, формой заявки и коротким сценарием,
-                  который помогает не терять время на лишние действия.
-                </p>
-
-                <div className='mt-5 flex flex-wrap justify-center gap-3'>
-                  <Link
-                    href='/catalog'
-                    className='cta-btn-primary rounded-2xl px-5 py-2.5 text-sm font-semibold transition-transform sm:text-base'>
-                    Смотреть каталог
-                  </Link>
-
-                  <Link
-                    href='/find-supplier'
-                    className='cta-btn-ghost rounded-2xl px-5 py-2.5 text-sm font-semibold sm:text-base'>
-                    Создать заявку
-                  </Link>
-                </div>
-
-                <div className='mt-4 grid grid-cols-3 gap-2 text-left sm:mt-5 sm:gap-3'>
-                  <div className='rounded-2xl border border-white/8 bg-white/5 px-2.5 py-2.5 text-center backdrop-blur-sm sm:px-3 sm:py-3 sm:text-left'>
-                    <div className='text-[10px] text-white/38 sm:text-sm'>
-                      1. Поиск
-                    </div>
-                    <div className='mt-1 text-[11px] font-semibold leading-tight sm:text-base'>
-                      Подбираем подходящие товары
-                    </div>
-                  </div>
-                  <div className='rounded-2xl border border-white/8 bg-white/5 px-2.5 py-2.5 text-center backdrop-blur-sm sm:px-3 sm:py-3 sm:text-left'>
-                    <div className='text-[10px] text-white/38 sm:text-sm'>
-                      2. Заявка
-                    </div>
-                    <div className='mt-1 text-[11px] font-semibold leading-tight sm:text-base'>
-                      Отправляете запрос поставщикам
-                    </div>
-                  </div>
-                  <div className='rounded-2xl border border-white/8 bg-white/5 px-2.5 py-2.5 text-center backdrop-blur-sm sm:px-3 sm:py-3 sm:text-left'>
-                    <div className='text-[10px] text-white/38 sm:text-sm'>
-                      3. Сравнение
-                    </div>
-                    <div className='mt-1 text-[11px] font-semibold leading-tight sm:text-base'>
-                      Сравниваете отклики и условия
-                    </div>
-                  </div>
-                </div>
+            <div className="mt-12 flex items-center justify-center gap-3 text-xs text-gray-400">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="h-8 w-8 rounded-full border-2 border-white/20 bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg"
+                  />
+                ))}
               </div>
-            </div>
-
-            <div className="mt-8 flex justify-center text-sm text-white/30">
-              <span>© 2026 Агора</span>
+              <span>Trusted by procurement teams worldwide</span>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+
+        <div className="mt-16 flex justify-center">
+          <span className="text-xs text-gray-500">© 2025 Agora. All rights reserved.</span>
+        </div>
+      </section>
     </div>
   );
 }
 
 const features = [
   {
-    icon: <SearchIcon size={36} strokeWidth={1.5} />,
-    title: "Умный поиск",
+    icon: "🔍",
+    title: "Smart matching",
     description:
-      "Быстро находите поставщиков по категориям, региону, MOQ и условиям поставки.",
+      "AI-powered algorithm connects you with the right suppliers based on MOQ, location, and pricing.",
   },
   {
-    icon: <PackageIcon size={36} strokeWidth={1.5} />,
-    title: "Единая заявка",
+    icon: "📋",
+    title: "Unified RFQ",
     description:
-      "Собирайте товары от разных поставщиков и отправляйте запросы в пару кликов.",
+      "Create single requests that reach multiple suppliers. Compare offers side by side.",
   },
   {
-    icon: <ZapIcon size={36} strokeWidth={1.5} />,
-    title: "Быстрые ответы",
+    icon: "⚡",
+    title: "Lightning responses",
     description:
-      "Получайте предложения напрямую от производителей и дистрибьюторов.",
+      "Get quotes from manufacturers within hours, not days. Average response < 2 hours.",
   },
 ];
 
 const categories = [
-  { id: "cat1", name: "Паллеты", slug: "pallets", icon: "📦", count: 48 },
-  { id: "cat2", name: "Плёнка", slug: "films", icon: "🎞️", count: 36 },
-  { id: "cat3", name: "Короба", slug: "boxes", icon: "📋", count: 72 },
-  { id: "cat4", name: "Мешки", slug: "bags", icon: "🛍️", count: 24 },
-  { id: "cat5", name: "Защита", slug: "protective", icon: "🛡️", count: 18 },
-  { id: "cat6", name: "Крепёж", slug: "fasteners", icon: "🔗", count: 50 },
+  { id: "cat1", name: "Pallets", slug: "pallets", icon: "📦", count: 148 },
+  { id: "cat2", name: "Stretch Film", slug: "films", icon: "🎞️", count: 96 },
+  { id: "cat3", name: "Corrugated", slug: "boxes", icon: "📋", count: 212 },
+  { id: "cat4", name: "Bags", slug: "bags", icon: "🛍️", count: 84 },
+  { id: "cat5", name: "Protection", slug: "protective", icon: "🛡️", count: 67 },
+  { id: "cat6", name: "Strapping", slug: "fasteners", icon: "🔗", count: 53 },
 ];
-
-type IconProps = {
-  size?: number;
-  strokeWidth?: number;
-};
-
-function SearchIcon({ size = 24, strokeWidth = 1.5 }: IconProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth={strokeWidth}
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      aria-hidden='true'>
-      <circle cx='11' cy='11' r='8' />
-      <path d='m21 21-4.3-4.3' />
-    </svg>
-  );
-}
-
-function PackageIcon({ size = 24, strokeWidth = 1.5 }: IconProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth={strokeWidth}
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      aria-hidden='true'>
-      <path d='M16.5 9.4 7.5 4.2' />
-      <path d='M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7Z' />
-      <path d='M3.3 7 12 12l8.7-5' />
-      <path d='M12 22V12' />
-    </svg>
-  );
-}
-
-function ZapIcon({ size = 24, strokeWidth = 1.5 }: IconProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth={strokeWidth}
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      aria-hidden='true'>
-      <path d='M13 2 3 14h7l-1 8 10-12h-7l1-8Z' />
-    </svg>
-  );
-}
