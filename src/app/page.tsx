@@ -302,12 +302,9 @@ export default function Page() {
               </div>
             </div>
 
-            <motion.div
-              className="mt-8 flex justify-center text-sm text-white/30"
-              {...fadeUp(0.4)}
-            >
+            <div className="mt-8 flex justify-center text-sm text-white/30">
               <span>© 2026 Агора</span>
-            </motion.div>
+            </div>
           </div>
         </section>
       </main>
