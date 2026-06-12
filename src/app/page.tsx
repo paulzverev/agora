@@ -52,7 +52,20 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation — чистая, минимальная */}
-      <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur-sm">
+      <nav
+        className="
+    sticky
+    top-0
+    z-50
+    w-full
+    border-b
+    border-white/50
+    bg-white/65
+    backdrop-blur-2xl
+    supports-[backdrop-filter]:bg-white/60
+    shadow-[0_1px_0_rgba(255,255,255,0.6),0_8px_30px_rgba(0,0,0,0.04)]
+  "
+      >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
           <Link
             href="/"
@@ -84,7 +97,7 @@ export default function Page() {
       {/* Hero секция */}
       <section
         data-reveal-section
-        className="reveal-section relative overflow-hidden px-6 py-20 lg:py-28"
+        className="reveal-section relative overflow-hidden px-6 py-24 lg:py-32"
       >
         <div className="relative mx-auto max-w-7xl">
           <div className="mx-auto max-w-3xl text-center">
@@ -93,7 +106,7 @@ export default function Page() {
               Поиск на основе ИИ
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+            <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
               Найдите поставщиков упаковки
               <span className="block text-gray-900">за минуты</span>
             </h1>
@@ -134,108 +147,236 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Dashboard mockup — вместо фотографии */}
-          <div className="mx-auto mt-16 max-w-5xl">
+          {/* Dashboard mockup — продуктовый интерфейс */}
+          <div className="mx-auto mt-20 max-w-5xl">
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
-              <div className="border-b border-gray-100 bg-gray-50/50 px-6 py-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-1.5">
-                    <div className="h-3 w-3 rounded-full bg-red-400" />
-                    <div className="h-3 w-3 rounded-full bg-yellow-400" />
-                    <div className="h-3 w-3 rounded-full bg-green-400" />
+              <div className="border-b border-gray-100 bg-gray-50/30 px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-1.5">
+                      <div className="h-3 w-3 rounded-full bg-red-400" />
+                      <div className="h-3 w-3 rounded-full bg-yellow-400" />
+                      <div className="h-3 w-3 rounded-full bg-green-400" />
+                    </div>
+                    <div className="h-6 w-48 rounded-md bg-gray-100" />
                   </div>
-                  <div className="h-6 w-48 rounded-md bg-gray-100" />
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400">AI Assistant</span>
+                    <div className="h-5 w-5 rounded-full bg-blue-100 text-center text-xs leading-5 text-blue-600">
+                      ✓
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="p-6">
-                <div className="grid gap-6 md:grid-cols-2">
-                  {/* Левая колонка — поиск */}
+                <div className="grid gap-8 md:grid-cols-2">
+                  {/* Левая колонка — поиск и фильтры */}
                   <div className="space-y-4">
-                    <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                      <div className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
-                        <span>🔍</span>
-                        <span>Поиск поставщиков</span>
+                    <div className="rounded-lg border border-gray-200 bg-white p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                          <span>🔍</span>
+                          <span>Поиск поставщиков</span>
+                        </div>
+                        <span className="text-xs text-gray-400">Advanced</span>
                       </div>
-                      <div className="h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-400">
+                      <div className="h-10 w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-400">
                         Введите материал или категорию...
                       </div>
                     </div>
 
-                    <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
+                    <div className="rounded-lg border border-gray-200 bg-white p-4">
                       <div className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
                         <span>📍</span>
                         <span>Регион поставки</span>
                       </div>
                       <div className="flex gap-2">
-                        <div className="h-8 w-20 rounded-md border border-gray-200 bg-white" />
-                        <div className="h-8 w-20 rounded-md border border-gray-200 bg-white" />
+                        <div className="h-8 w-24 rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-xs text-gray-600">
+                          Москва
+                        </div>
+                        <div className="h-8 w-24 rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-xs text-gray-600">
+                          СПБ
+                        </div>
                       </div>
                     </div>
 
-                    <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                      <div className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
-                        <span>📊</span>
-                        <span>AI анализ</span>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="h-2 w-full rounded-full bg-gray-100">
-                          <div className="h-2 w-3/4 rounded-full bg-blue-500" />
+                    <div className="rounded-lg border border-gray-200 bg-white p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                          <span>🤖</span>
+                          <span>AI анализ</span>
                         </div>
-                        <div className="flex justify-between text-xs text-gray-400">
-                          <span>Совместимость</span>
-                          <span>74%</span>
+                        <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+                          Active
+                        </span>
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <div className="mb-1 flex justify-between text-xs text-gray-500">
+                            <span>Совместимость</span>
+                            <span className="font-medium text-gray-900">92%</span>
+                          </div>
+                          <div className="h-1.5 w-full rounded-full bg-gray-100">
+                            <div className="h-1.5 w-[92%] rounded-full bg-blue-500" />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="mb-1 flex justify-between text-xs text-gray-500">
+                            <span>Качество сервиса</span>
+                            <span className="font-medium text-gray-900">88%</span>
+                          </div>
+                          <div className="h-1.5 w-full rounded-full bg-gray-100">
+                            <div className="h-1.5 w-[88%] rounded-full bg-blue-500" />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Правая колонка — результаты */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2 text-sm">
-                      <span className="font-medium text-gray-500">Лучшие совпадения</span>
-                      <span className="text-blue-600">3 найдено</span>
-                    </div>
-                    {[1, 2, 3].map((i) => (
-                      <div
-                        key={i}
-                        className="rounded-lg border border-gray-100 bg-white p-3 transition-shadow hover:shadow-sm"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium text-gray-900">Поставщик {i}</div>
-                            <div className="text-xs text-gray-400">Москва • MOQ от 100 шт</div>
-                          </div>
-                          <div className="text-sm font-medium text-blue-600">от 150 ₽</div>
-                        </div>
+                  {/* Правая колонка — результаты поиска */}
+                  <div>
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-700">
+                          Лучшие совпадения
+                        </span>
+                        <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+                          3 найдено
+                        </span>
                       </div>
-                    ))}
+                      <div className="flex gap-1 text-xs text-gray-400">
+                        <span>Рекомендовано AI</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {[
+                        {
+                          name: "ПаллетПром",
+                          location: "Москва",
+                          price: "145 ₽",
+                          moq: "500 шт",
+                          match: "98%",
+                          verified: true,
+                          fastResponse: true,
+                        },
+                        {
+                          name: "УпакСервис",
+                          location: "Санкт-Петербург",
+                          price: "158 ₽",
+                          moq: "300 шт",
+                          match: "94%",
+                          verified: true,
+                          fastResponse: false,
+                        },
+                        {
+                          name: "ЛогистикПак",
+                          location: "Казань",
+                          price: "139 ₽",
+                          moq: "1000 шт",
+                          match: "89%",
+                          verified: false,
+                          fastResponse: true,
+                        },
+                      ].map((supplier, idx) => (
+                        <div
+                          key={idx}
+                          className="rounded-lg border border-gray-100 bg-white p-3 transition-all hover:border-gray-200 hover:shadow-sm"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="mb-1 flex items-center gap-2">
+                                <div className="font-medium text-gray-900">
+                                  {supplier.name}
+                                </div>
+                                {supplier.verified && (
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-1.5 py-0.5 text-xs font-medium text-blue-700">
+                                    <span className="text-xs">✓</span>
+                                    <span>Verified</span>
+                                  </span>
+                                )}
+                                {supplier.fastResponse && (
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700">
+                                    <span>⚡</span>
+                                    <span>Fast Response</span>
+                                  </span>
+                                )}
+                              </div>
+                              <div className="mb-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-400">
+                                <span>{supplier.location}</span>
+                                <span>MOQ: {supplier.moq}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <div className="h-1 w-16 rounded-full bg-gray-100">
+                                  <div
+                                    className={`h-1 rounded-full ${parseInt(supplier.match) >= 95
+                                      ? "bg-green-500"
+                                      : "bg-blue-500"
+                                      }`}
+                                    style={{ width: supplier.match }}
+                                  />
+                                </div>
+                                <span className="text-xs font-medium text-gray-700">
+                                  AI Match {supplier.match}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-base font-semibold text-gray-900">
+                                {supplier.price}
+                              </div>
+                              <div className="text-xs text-gray-400">за шт</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-4 rounded-lg border border-dashed border-gray-200 bg-gray-50/30 p-3 text-center">
+                      <span className="text-xs text-gray-500">
+                        + еще 17 поставщиков по вашему запросу
+                      </span>
+                    </div>
                   </div>
                 </div>
 
                 {/* AI matching статус */}
-                <div className="mt-6 flex items-center justify-center gap-2 border-t border-gray-100 pt-4 text-xs text-gray-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                  <span>AI matching active</span>
-                  <span className="mx-1">•</span>
-                  <span>Обновлён в реальном времени</span>
+                <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                    <span>AI matching active</span>
+                    <span className="mx-1">•</span>
+                    <span>Обновлён в реальном времени</span>
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Анализ 1 247 поставщиков
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Trust line */}
+          <div className="mx-auto mt-8 text-center">
+            <p className="text-sm text-gray-400">Более 50 000 обработанных заявок</p>
+          </div>
         </div>
       </section>
+
+      {/* Разделитель */}
+      <div className="border-t border-gray-100" />
 
       {/* Features grid */}
       <section
         data-reveal-section
-        className="reveal-section border-t border-gray-100 bg-gray-50/30 py-20"
+        className="reveal-section bg-gray-50/30 py-24"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mb-12 text-center">
+          <div className="mb-16 text-center">
             <div className="mb-4 inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600">
               Почему Агора
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="mx-auto max-w-3xl text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
               Создано для современных команд закупок
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-gray-500">
@@ -243,13 +384,14 @@ export default function Page() {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="rounded-2xl border border-gray-200 bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-md"
+                className="group relative rounded-2xl border border-gray-200 bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-md"
               >
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-lg">
+                <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl bg-transparent group-hover:bg-blue-500" />
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
                   {feature.icon}
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">
@@ -264,13 +406,16 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Разделитель */}
+      <div className="border-t border-gray-100" />
+
       {/* Stats section */}
       <section
         data-reveal-section
-        className="reveal-section border-b border-gray-100 py-20"
+        className="reveal-section py-24"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-12 md:grid-cols-3">
             {[
               { value: "99.9%", label: "Время работы", desc: "Корпоративная надёжность" },
               { value: "< 2 ч", label: "Среднее время ответа", desc: "От поставщиков" },
@@ -286,19 +431,22 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Разделитель */}
+      <div className="border-t border-gray-100" />
+
       {/* CTA section */}
       <section
         data-reveal-section
-        className="reveal-section border-t border-gray-100 py-20"
+        className="reveal-section py-24"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="rounded-2xl border border-gray-200 bg-gray-50/50 p-8 text-center sm:p-12">
+          <div className="rounded-2xl border border-gray-200 bg-gray-50/30 p-12 text-center sm:p-16">
             <div className="mx-auto max-w-2xl">
               <div className="mb-4 inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600">
                 Готовы масштабировать закупки?
               </div>
 
-              <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                 Начните поиск поставщиков за 5 минут
               </h2>
 
@@ -322,7 +470,7 @@ export default function Page() {
                 </Link>
               </div>
 
-              <div className="mt-10 flex items-center justify-center gap-2 text-xs text-gray-400">
+              <div className="mt-12 flex items-center justify-center gap-2 text-xs text-gray-400">
                 <div className="flex -space-x-1.5">
                   {[1, 2, 3, 4].map((i) => (
                     <div
@@ -337,7 +485,7 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="mt-16 text-center">
           <span className="text-xs text-gray-400">© 2025 Агора. Все права защищены.</span>
         </div>
       </section>
