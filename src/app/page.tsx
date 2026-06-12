@@ -10,8 +10,63 @@ const badgeMessages = [
   "Почти нашли идеального партнера",
 ];
 
+const heroTitles = [
+  "Найдите поставщиков упаковки за минуты",
+  "Сравнивайте предложения в одном окне",
+  "Получайте лучшие цены автоматически",
+  "Находите производителей без посредников",
+  "Запускайте закупки быстрее конкурентов",
+];
+
 export default function Page() {
   const [badgeIndex, setBadgeIndex] = useState(0);
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  const [heroText, setHeroText] = useState(heroTitles[0]);
+  const [heroTitleIndex, setHeroTitleIndex] = useState(0);
+
+  useEffect(() => {
+    let currentIndex = 0;
+    let currentText = heroTitles[0];
+
+    const runAnimation = () => {
+      const nextIndex = (currentIndex + 1) % heroTitles.length;
+      const nextText = heroTitles[nextIndex];
+
+      let deletePos = currentText.length;
+
+      const deleteInterval = setInterval(() => {
+        deletePos--;
+
+        setHeroText(currentText.slice(0, deletePos));
+
+        if (deletePos <= 0) {
+          clearInterval(deleteInterval);
+
+          let typePos = 0;
+
+          const typeInterval = setInterval(() => {
+            typePos++;
+
+            setHeroText(nextText.slice(0, typePos));
+
+            if (typePos >= nextText.length) {
+              clearInterval(typeInterval);
+
+              currentIndex = nextIndex;
+              currentText = nextText;
+
+              setTimeout(runAnimation, 2500);
+            }
+          }, 40);
+        }
+      }, 25);
+    };
+
+    const startTimeout = setTimeout(runAnimation, 2500);
+
+    return () => clearTimeout(startTimeout);
+  }, []);
 
   useEffect(() => {
     const sections = document.querySelectorAll<HTMLElement>("[data-reveal-section]");
@@ -107,8 +162,8 @@ export default function Page() {
             </div>
 
             <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-              Найдите поставщиков упаковки
-              <span className="block text-gray-900">за минуты</span>
+              {heroText}
+              <span className="typing-cursor">|</span>
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-500">
